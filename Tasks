@@ -1,0 +1,58 @@
+SIMPLE TASKS (ALL OF THEM CAN BE USED FOR VISUALIZATION): 
+
+1. Poorest States
+2. Most common name
+3. States Graduated
+4. States Race
+5. States High School vs Poverty 
+6. Killed people race
+7. Killed people race in proportion to their population
+8. Most Common Kill weapon
+9. Dangerous Cities and States
+10. Killed people gender
+11. Killed average age by race
+12. Most common weapon of victim
+13. Police Body Camera
+
+
+
+
+ANALYSIS TASKS:
+
+1. Suspicious police officer ratio: No body camera vs unarmed victim vs race
+
+2. Relation in states between: 
+	High school rate vs poverty rate vs (vs kill rate?)
+	 -> possible conclusion: low high school graduation rate -> high criminality
+   	Unemployment rate vs 
+	 
+3. GENERAL FACTS:
+	 Median household income in the US. 
+	 Poverty rate in the US.
+	 Graduation Rate in the US.
+	 Share Race in the US.
+	 Unemployment Rate in the US.
+	 
+
+
+
+DATA:
+
+1. Poverty Thresholds by # in family 2015:
+	1 	$11,770
+	2 	$15,930
+	3 	$20,090
+	4 	$24,250
+	5 	$28,410
+	6 	$32,570
+	7 	$36,730
+	8 	$40,890
+	
+
+PD:
+
+1. Unemployment rate table provenance: US BUREAU OF LABOR STATISTICS https://data.bls.gov/ 
+	
+	
+	
+	
