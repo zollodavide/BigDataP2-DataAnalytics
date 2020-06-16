@@ -1,9 +1,9 @@
-SIMPLE TASKS (ALL OF THEM CAN BE USED FOR VISUALIZATION): 
+SIMPLE TASKS (CAN BE USED FOR VISUALIZATION): 
 
 1. Poorest States
-2. Most common name
-3. States Graduated
-4. States Race
+2. Most common names victim
+3. Number of poor states (states with more than 50% of poor population)
+4. 
 5. States High School vs Poverty 
 6. Killed people race
 7. Killed people race in proportion to their population
@@ -13,18 +13,27 @@ SIMPLE TASKS (ALL OF THEM CAN BE USED FOR VISUALIZATION):
 11. Killed average age by race
 12. Most common weapon of victim
 13. Police Body Camera
+14. Mental illness vs threat level in killings 
 
 
 
 
 ANALYSIS TASKS:
 
-1. Suspicious police officer ratio: No body camera vs unarmed victim vs race
+1. Is there a police vs race problem in the US? For making such a conclusion one should analyze how many
+	unjust killings occured against a specific race.
+What is an unjust kill? When the victim is unarmed, the threat level is not attack and 
+	the victim is not trying to run away. 
+Compare total unjust killings with every race.
+Top states with most unjust killings against specific races.
+
+1.5. Suspicious police officer: No body camera, unarmed victim, no threat level (, race of victim)
 
 2. Relation in states between: 
 	High school rate vs poverty rate vs (vs kill rate?)
 	 -> possible conclusion: low high school graduation rate -> high criminality
-   	Unemployment rate vs 
+   	Killings in states with high Unemployment rate vs signs of mental illness
+   	 -> possible conclusion: high unemployment rate -> more mental illness
 	 
 3. GENERAL FACTS:
 	 Median household income in the US. 
@@ -34,6 +43,10 @@ ANALYSIS TASKS:
 	 Unemployment Rate in the US.
 	 
 
+Why is this analysis important:
+If the results of the analysis point to the fact that there's a race vs police problem, you could use 
+this information to tackle the problem. In states with high a ratio, one could enforce more police control,
+or even defund police stations.
 
 
 DATA:
