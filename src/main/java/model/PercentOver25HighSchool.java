@@ -1,7 +1,13 @@
 package model;
 
-public class PercentOver25HighSchool {
+import java.io.Serializable;
 
+public class PercentOver25HighSchool implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String state;
 	private String city;
 	private Double percentCompletedHS;

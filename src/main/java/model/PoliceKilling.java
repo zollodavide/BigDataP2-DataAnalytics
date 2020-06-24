@@ -1,16 +1,21 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PoliceKilling {
+public class PoliceKilling implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private Date date;
 	private String mannerOfDeath;
 	private String armed;
 	private Integer age;
-	private String gender;
-	private String race;
+	private Character gender;
+	private Character race;
 	private String city;
 	private String state;
 	private Boolean signsOfMentalIllness;
@@ -60,19 +65,19 @@ public class PoliceKilling {
 		this.age = age;
 	}
 
-	public String getGender() {
+	public Character getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(Character gender) {
 		this.gender = gender;
 	}
 
-	public String getRace() {
+	public Character getRace() {
 		return race;
 	}
 
-	public void setRace(String race) {
+	public void setRace(Character race) {
 		this.race = race;
 	}
 

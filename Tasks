@@ -65,7 +65,28 @@ DATA:
 PD:
 
 1. Unemployment rate table provenance: US BUREAU OF LABOR STATISTICS https://data.bls.gov/ 
+
+
+
+TOTAL ROWS PER FILE:
+MDI: 29323
+PPP: 29330
+PO25HS: 29330
+PK: 2536
+SRC: 29269 
 	
 	
-	
+RESULTS:
+
+Parsed Records by File
+MDI: 27383  
+PPP: 29126
+PO25HS: 29130
+PK: 2310
+SRC: 29246
+
+
+
+
+
 	

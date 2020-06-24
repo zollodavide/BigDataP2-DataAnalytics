@@ -1,7 +1,13 @@
 package model;
 
-public class PercentagePeoplePoverty {
+import java.io.Serializable;
+
+public class PercentagePeoplePoverty implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String state;
 	private String city;
 	private Double povertyRate;

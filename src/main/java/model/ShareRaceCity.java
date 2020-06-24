@@ -1,13 +1,20 @@
 package model;
 
-public class ShareRaceCity {
+import java.io.Serializable;
 
+public class ShareRaceCity implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String state;
 	private String city;
 	private Double shareWhite;
 	private Double shareNativeAmerican;
 	private Double shareBlack;
 	private Double shareAsian;
+	private Double shareHispanic;
 
 	public ShareRaceCity() {}
 
@@ -57,6 +64,14 @@ public class ShareRaceCity {
 
 	public void setShareAsian(Double shareAsian) {
 		this.shareAsian = shareAsian;
+	}
+
+	public Double getShareHispanic() {
+		return shareHispanic;
+	}
+
+	public void setShareHispanic(Double shareHispanic) {
+		this.shareHispanic = shareHispanic;
 	}
 	
 	
