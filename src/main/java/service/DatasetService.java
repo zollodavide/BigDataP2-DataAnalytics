@@ -13,11 +13,11 @@ import utility.Parser;
 
 public class DatasetService {
 	
-	public JavaRDD<MedianHouseholdIncome> medianIncome;
-	public JavaRDD<PercentagePeoplePoverty> percentagePoverty;
-	public JavaRDD<PercentOver25HighSchool> percentHighSchool;
-	public JavaRDD<PoliceKilling> policeKilling;
-	public JavaRDD<ShareRaceCity> shareRace;
+	private JavaRDD<MedianHouseholdIncome> medianIncome;
+	private JavaRDD<PercentagePeoplePoverty> percentagePoverty;
+	private JavaRDD<PercentOver25HighSchool> percentHighSchool;
+	private JavaRDD<PoliceKilling> policeKilling;
+	private JavaRDD<ShareRaceCity> shareRace;
 	private JavaSparkContext sparkContext;
 	
 	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR) {
@@ -84,10 +84,6 @@ public class DatasetService {
 	public JavaRDD<ShareRaceCity> getShareRace() {
 		return shareRace;
 	}
-	
-	
-	
-	
 	
 	
 }

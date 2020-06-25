@@ -1,12 +1,12 @@
 SIMPLE TASKS (CAN BE USED FOR VISUALIZATION): 
 
 1. (DONE) Poorest States 
-2. Most common names victim
+2. (DONE) Most common names victim
 3. Number of poor states (states with more than 50% of poor population)
 4. 
 5. States High School vs Poverty 
-6. Killed people race
-7. Killed people race in proportion to their population
+6. (DONE) Killed people by race
+7. Killed people race in proportion to their population in the state
 8. Most Common Kill weapon
 9. Dangerous Cities and States
 10. Killed people gender
@@ -103,7 +103,8 @@ PoliceKillingsUS: 2310 (-225)
 		-INTRODUCED NEW AGE VALUE -1 MEANING THE VALUE IS MISSING. THIS WAY WE CAN STILL USE THE OTHER FIELDS.
 		 REMEMBER TO FILTER OUT THESE VALUES WHEN CALCULATING AGE ATTRIBUTES (EX:MEAN AGE)
 		-INTRODUCED NEW RACE VALUE '?' MEANING THE VALUE IS NOT IDENTIFIED. THIS WAY WE CAN STILL USE THE OTHER FIELDS.
-
+		-THERE ARE 51 RECORDS WHITH THE NAME VALUE 'TK TK', THIS PROBABLY MEANS IT'S MISSING
+		
 ShareRaceByCity: 29246 (-22) 
 	20 RECORDS DONT HAVE VALUES
 	2 CASES: NAME -> Moore County metropolitan government , Village of Islands village 

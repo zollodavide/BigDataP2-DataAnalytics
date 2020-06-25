@@ -7,7 +7,7 @@ import service.DatasetService;
 
 public class Analytics {
 
-	private DatasetService datasetService;
+	private DatasetService datasetService; //SINGLETON -> NON INSTANZIARE DUE VOLTE
 	
 	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR) {
 		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR);
@@ -17,7 +17,14 @@ public class Analytics {
 		
 		JavaRDD<Tuple2<String, Double>> sortedPoorestStates = 
 				calculatePoorestStates(this.datasetService.getPercentagePoverty());
-		printPoorestStates(sortedPoorestStates);
+		JavaRDD<Tuple2<String, Integer>> sortedCommonVictimNames = 
+				calculateMostCommonVictimNames(this.datasetService.getPoliceKilling());
+		JavaRDD<Tuple2<Character,Integer>> sortedRaceVictims = calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
+		
+		printVictimsByRace(sortedRaceVictims);
+//		printMostCommonNames(sortedCommonVictimNames);
+//		printPoorestStates(sortedPoorestStates);
+		
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
 		
 	}
@@ -43,6 +50,46 @@ public class Analytics {
 		return sorted;
 	}
 
+	
+	private JavaRDD<Tuple2<String, Integer>> calculateMostCommonVictimNames(JavaRDD<PoliceKilling> rdd) {
+		
+		JavaPairRDD<String, Integer> name2count = rdd
+				.mapToPair(pk -> new Tuple2<>(pk.getName().split(" ")[0], 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		JavaRDD<Tuple2<String, Integer>> sorted = name2count
+				.map(tup -> tup)
+				.sortBy(tup -> tup._2(), false, 1);
+		
+		return sorted;
+	}
+	
+	
+	private JavaRDD<Tuple2<Character,Integer>> calculateKilledPeopleByRace(JavaRDD<PoliceKilling> rdd) {
+		
+		JavaPairRDD<Character, Integer> race2count = rdd
+				.mapToPair(pk -> new Tuple2<>(pk.getRace(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		JavaRDD<Tuple2<Character, Integer>> sorted = race2count
+				.map(tup -> tup)
+				.sortBy(tup -> tup._2(), false, 1);
+		
+		return sorted;
+	}
+	
+	private void printVictimsByRace(JavaRDD<Tuple2<Character, Integer>> sorted) {
+		List<Tuple2<Character, Integer>> out = sorted.collect();
+		for(Tuple2<Character, Integer> p : out)
+			System.out.println(p._1() + ": " + p._2());
+	}
+	
+	private void printMostCommonNames(JavaRDD<Tuple2<String, Integer>> sorted) {
+		List<Tuple2<String, Integer>> out = sorted.collect();
+		for(Tuple2<String, Integer> p : out)
+			System.out.println(p._1() + ": " + p._2());
+	}
+	
 	private void printPoorestStates(JavaRDD<Tuple2<String, Double>> sorted) {
 		List<Tuple2<String, Double>> out = sorted.collect();
 		for(Tuple2<String, Double> p : out)
@@ -50,7 +97,6 @@ public class Analytics {
 	}
 
 	
-	@SuppressWarnings("unused")
 	private void printNumberOfParsedRecords(JavaRDD<MedianHouseholdIncome> raw1, JavaRDD<PercentagePeoplePoverty> raw2,
 			JavaRDD<PercentOver25HighSchool> raw3, JavaRDD<PoliceKilling> raw4, JavaRDD<ShareRaceCity> raw5) {
 		System.out.println("Parsed Records by File");
