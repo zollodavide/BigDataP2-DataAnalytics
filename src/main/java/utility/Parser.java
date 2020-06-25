@@ -17,7 +17,8 @@ public class Parser {
 		} catch (NumberFormatException e) {
 			return null;  	/// VALORE VUOTO -> DATASET BUCATO
 		} catch (Exception e) {
-//			System.out.println(e);   ///ERRORE DI PARSING
+			System.out.println(e);   ///ERRORE DI PARSING
+			return null;
 		}
 		return out;
 	}
@@ -30,10 +31,10 @@ public class Parser {
 			out.setCity(parts[1]);
 			out.setPovertyRate(Double.parseDouble(parts[2]));
 		} catch (NumberFormatException e) {
-//			System.out.println(e); 
 			return null;  	/// VALORE VUOTO -> DATASET BUCATO
 		} catch (Exception e) {
-//			System.out.println(e);   ///ERRORE DI PARSING
+			System.out.println(e);   ///ERRORE DI PARSING
+			return null;
 		}
 		return out;
 	}
@@ -50,10 +51,10 @@ public class Parser {
 			out.setShareAsian(Double.parseDouble(parts[5]));
 			out.setShareHispanic(Double.parseDouble(parts[6]));
 		} catch (NumberFormatException e) {
-//			System.out.println(e); 
 			return null;  	/// VALORE VUOTO -> DATASET BUCATO
 		} catch (Exception e) {
-//			System.out.println(e);   ///ERRORE DI PARSING
+			System.out.println(e);   ///ERRORE DI PARSING
+			return null;
 		}
 		return out;
 	}
@@ -66,10 +67,10 @@ public class Parser {
 			out.setCity(parts[1]);
 			out.setPercentCompletedHS(Double.parseDouble(parts[2]));
 		} catch (NumberFormatException e) {
-//			System.out.println(e); 
 			return null;  	/// VALORE VUOTO -> DATASET BUCATO
 		} catch (Exception e) {
-//			System.out.println(e);   ///ERRORE DI PARSING
+			System.out.println(e);   ///ERRORE DI PARSING
+			return null;
 		}
 		return out;
 	}

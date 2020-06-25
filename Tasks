@@ -1,6 +1,6 @@
 SIMPLE TASKS (CAN BE USED FOR VISUALIZATION): 
 
-1. Poorest States
+1. (DONE) Poorest States 
 2. Most common names victim
 3. Number of poor states (states with more than 50% of poor population)
 4. 
@@ -49,7 +49,10 @@ this information to tackle the problem. In states with high a ratio, one could e
 or even defund police stations.
 
 
-DATA:
+
+
+
+MORE DATA:
 
 1. Poverty Thresholds by # in family 2015:
 	1 	$11,770
@@ -63,9 +66,7 @@ DATA:
 	
 
 PD:
-
 1. Unemployment rate table provenance: US BUREAU OF LABOR STATISTICS https://data.bls.gov/ 
-
 
 
 TOTAL ROWS PER FILE:
@@ -74,6 +75,8 @@ PPP: 29329
 PO25HS: 29329
 PK: 2535
 SRC: 29268 
+
+
 	
 	
 PARSE RESULTS:
@@ -88,21 +91,20 @@ PercentagePeopleBelowPovertyLevel: 29126 (-203)
 	201 RECORDS DONT HAVE VALUES
 	2 CASES: NAME -> Moore County metropolitan government , Village of Islands village 
 
-PO25HS: 29130 (-199)
+PercentOver25CompletedHighSchool: 29130 (-199)
 	197 RECORDS DONT HAVE VALUES
 	2 CASES: NAME -> Moore County metropolitan government , Village of Islands village 
 
-PK: 2310 (-225)
+PoliceKillingsUS: 2310 (-225)
 	77 RECORDS DONT HAVE AN AGE VALUE (CORRECTED) -> OUT OF 77 RECORDS 48 ARE MISSING BOTH AGE AND RACE
 	147 RECORDS DONT HAVE A RACE VALUE (CORRECTED)
 	1 CASE (CORRECTED): NAME -> "Hubert Thomas Burns, Jr." -> CHANGED TO Hubert Thomas Burns, Jr.
 	P.D.:	
 		-INTRODUCED NEW AGE VALUE -1 MEANING THE VALUE IS MISSING. THIS WAY WE CAN STILL USE THE OTHER FIELDS.
 		 REMEMBER TO FILTER OUT THESE VALUES WHEN CALCULATING AGE ATTRIBUTES (EX:MEAN AGE)
-		-INTRODUCED NEW RACE VALUE '?' MEANING THE VALUE IS MISSING. THIS WAY WE CAN STILL USE THE OTHER FIELDS.
+		-INTRODUCED NEW RACE VALUE '?' MEANING THE VALUE IS NOT IDENTIFIED. THIS WAY WE CAN STILL USE THE OTHER FIELDS.
 
-
-SRC: 29246 (-22) 
+ShareRaceByCity: 29246 (-22) 
 	20 RECORDS DONT HAVE VALUES
 	2 CASES: NAME -> Moore County metropolitan government , Village of Islands village 
 	

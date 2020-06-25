@@ -33,5 +33,9 @@ public class PercentagePeoplePoverty implements Serializable {
 		this.povertyRate = povertyRate;
 	}
 	
+	@Override
+	public String toString() {
+		return "PercentagePeoplePoverty [state: " + state + ", city: " + city + ", povertyRate: " + povertyRate + "]";
+	}
 	
 }
