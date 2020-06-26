@@ -2,13 +2,14 @@ SIMPLE TASKS (CAN BE USED FOR VISUALIZATION):
 
 1. (DONE) Poorest States 
 2. (DONE) Most common names victim
-3. 
-4. 
+3. (DONE) State mean HS graduates
+4. (DONE) Killed people count by State
 5. (DONE) States High School vs Poverty 
-6. (DONE) Killed people by race
-7. Killed people race in proportion to their population in the state
-8. Most Common Manner of death
-9. Dangerous Cities and States
+6. (DONE) Killed people count by race
+7. (DONE - SEE BELOW) Killed people race in proportion to their population in the state 
+		-Proportions are too low and maybe irrelevant (e.g. results: 0,00002%)
+8.  Most Common Manner of death
+9.  Dangerous Cities and States
 10. Killed people gender
 11. Killed average age by race
 12. Most common weapon of victim
@@ -67,7 +68,7 @@ MORE DATA:
 
 PD:
 1. Unemployment rate table provenance: US BUREAU OF LABOR STATISTICS https://data.bls.gov/ 
-
+2. State population table provenance: https://healthdata.gov/
 
 TOTAL ROWS PER FILE:
 MDI: 29322

@@ -1,4 +1,6 @@
 import java.util.List;
+import java.util.Map;
+
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import model.*;
@@ -11,8 +13,8 @@ public class Analytics {
 	private DatasetService datasetService; //SINGLETON -> NON INSTANZIARE DUE VOLTE
 	private Printer printer;
 	
-	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR) {
-		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR);
+	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP) {
+		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP);
 		this.printer = new Printer();
 	}
 	
@@ -26,15 +28,61 @@ public class Analytics {
 				calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
 		JavaPairRDD<String, Tuple2<Double, Double>> educationVSpoverty = 
 				calculateEducationVsPoverty(this.datasetService.getPercentHighSchool(), this.datasetService.getPercentagePoverty());
+	
+		JavaRDD<Tuple2<String, Integer>> sortedVictimByState= 
+				calculateKilledPeopleByState(this.datasetService.getPoliceKilling());
 		
-		printer.printVictimsByRace(sortedRaceVictims,false);
-		printer.printMostCommonNames(sortedCommonVictimNames,false);
-		printer.printPoorestStates(sortedPoorestStates,false);
-		printer.printEducationVSPoverty(educationVSpoverty, false);
-		printer.printAllResults();
+		JavaRDD<Tuple2<String, Double>> sortedState= 
+				calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(), this.datasetService.getStatePopulation());
+		
+		
+		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
+		List<Tuple2<String,Double>>sdd = sortedState.collect();
+		
+		for(Tuple2<String,Double> a: sdd)
+			System.out.println(a._1() + ": " + a._2());
+//		printer.printVictimsByRace(sortedRaceVictims,false);
+//		printer.printMostCommonNames(sortedCommonVictimNames,false);
+//		printer.printPoorestStates(sortedPoorestStates,false);
+//		printer.printEducationVSPoverty(educationVSpoverty, false);
+//		printer.printAllResults();
 		
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
 		
+	}
+	
+	private JavaRDD<Tuple2<String, Double>> calculateVictimsToPopulationProportion(JavaRDD<PoliceKilling> rddPK, JavaRDD<StatePopulation> rddSP) {
+		
+		JavaPairRDD<String, Integer> state2victimCount = calculateKilledPeopleByState(rddPK)
+				.mapToPair(tup -> tup);
+		
+		JavaPairRDD<String, Integer> state2population = rddSP
+				.mapToPair(sp -> new Tuple2<>(sp.getState(), sp.getPopulation()));
+		
+		JavaPairRDD<String, Double> state2prop = state2victimCount
+				.join(state2population)
+				.mapToPair(tup -> new Tuple2<>(tup._1(), ((double)tup._2()._1() / (double)tup._2()._2())));
+		
+		JavaRDD<Tuple2<String, Double>> sorted = state2prop
+				.map(tup -> new Tuple2<>(tup._1(), tup._2()))
+				.sortBy(tup ->tup._2(), false, 1);
+		
+		return sorted;
+		
+	}
+	
+	
+	private JavaRDD<Tuple2<String, Integer>> calculateKilledPeopleByState(JavaRDD<PoliceKilling> rdd) {
+		
+		JavaPairRDD<String, Integer> state2count = rdd
+				.mapToPair(pk -> new Tuple2<>(pk.getState(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		JavaRDD<Tuple2<String, Integer>> sorted = state2count
+				.map(tup -> new Tuple2<>(tup._1(), tup._2()))
+				.sortBy(tup ->tup._2(), false, 1);
+		
+		return sorted;
 	}
 
 	private JavaRDD<Tuple2<String, Double>> calculatePoorestStates(JavaRDD<PercentagePeoplePoverty> rdd) {
@@ -60,7 +108,7 @@ public class Analytics {
 	
 	private JavaPairRDD<String, Tuple2<Double, Double>> calculateEducationVsPoverty(JavaRDD<PercentOver25HighSchool> rddHS, JavaRDD<PercentagePeoplePoverty> rddPP) {
 		
-		JavaPairRDD<String, Double> state2meanHS = calculateStateEducation(rddHS);
+		JavaPairRDD<String, Double> state2meanHS = calculateStateMeanEducation(rddHS);
 		JavaPairRDD<String, Double> state2poorness = calculatePoorestStates(rddPP)
 				.mapToPair(tup -> tup);
 		
@@ -70,7 +118,7 @@ public class Analytics {
 		return state2educ2poor;
 	}
 
-	private JavaPairRDD<String, Double> calculateStateEducation(JavaRDD<PercentOver25HighSchool> rddHS) {
+	private JavaPairRDD<String, Double> calculateStateMeanEducation(JavaRDD<PercentOver25HighSchool> rddHS) {
 		
 		JavaPairRDD<String,Double> state2cityPerc = rddHS.
 				mapToPair(hs -> new Tuple2<>(hs.getState(), hs.getPercentCompletedHS()));

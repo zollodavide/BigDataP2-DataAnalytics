@@ -114,5 +114,23 @@ public class Parser {
 	}
 	
 	
+	public static StatePopulation parseStatePopulationTable(String line) {
+		String[] parts = line.split(",");
+		StatePopulation out = new StatePopulation();
+		try {
+			out.setYear(Integer.parseInt(parts[0]));
+			out.setState(parts[1]);
+			out.setPopulation(Integer.parseInt(parts[7]));
+			out.setGenre(parts[8]);
+			out.setAge(parts[9]);
+		} catch (NumberFormatException e) {
+			return null;  	/// VALORE VUOTO -> DATASET BUCATO
+		} catch (Exception e) {
+			System.out.println(e);   ///ERRORE DI PARSING
+			return null;
+		}
+		return out;
+	}
+	
 
 }
