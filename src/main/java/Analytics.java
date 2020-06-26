@@ -4,13 +4,16 @@ import org.apache.spark.api.java.JavaRDD;
 import model.*;
 import scala.Tuple2;
 import service.DatasetService;
+import utility.Printer;
 
 public class Analytics {
 
 	private DatasetService datasetService; //SINGLETON -> NON INSTANZIARE DUE VOLTE
+	private Printer printer;
 	
 	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR) {
 		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR);
+		this.printer = new Printer();
 	}
 	
 	public void run() {
@@ -19,11 +22,16 @@ public class Analytics {
 				calculatePoorestStates(this.datasetService.getPercentagePoverty());
 		JavaRDD<Tuple2<String, Integer>> sortedCommonVictimNames = 
 				calculateMostCommonVictimNames(this.datasetService.getPoliceKilling());
-		JavaRDD<Tuple2<Character,Integer>> sortedRaceVictims = calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
+		JavaRDD<Tuple2<Character,Integer>> sortedRaceVictims = 
+				calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
+		JavaPairRDD<String, Tuple2<Double, Double>> educationVSpoverty = 
+				calculateEducationVsPoverty(this.datasetService.getPercentHighSchool(), this.datasetService.getPercentagePoverty());
 		
-		printVictimsByRace(sortedRaceVictims);
-//		printMostCommonNames(sortedCommonVictimNames);
-//		printPoorestStates(sortedPoorestStates);
+		printer.printVictimsByRace(sortedRaceVictims,false);
+		printer.printMostCommonNames(sortedCommonVictimNames,false);
+		printer.printPoorestStates(sortedPoorestStates,false);
+		printer.printEducationVSPoverty(educationVSpoverty, false);
+		printer.printAllResults();
 		
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
 		
@@ -48,6 +56,35 @@ public class Analytics {
 				.sortBy(tup ->tup._2(), false, 1);
 		
 		return sorted;
+	}
+	
+	private JavaPairRDD<String, Tuple2<Double, Double>> calculateEducationVsPoverty(JavaRDD<PercentOver25HighSchool> rddHS, JavaRDD<PercentagePeoplePoverty> rddPP) {
+		
+		JavaPairRDD<String, Double> state2meanHS = calculateStateEducation(rddHS);
+		JavaPairRDD<String, Double> state2poorness = calculatePoorestStates(rddPP)
+				.mapToPair(tup -> tup);
+		
+		JavaPairRDD<String, Tuple2<Double,Double>> state2educ2poor = state2meanHS
+				.join(state2poorness);
+				
+		return state2educ2poor;
+	}
+
+	private JavaPairRDD<String, Double> calculateStateEducation(JavaRDD<PercentOver25HighSchool> rddHS) {
+		
+		JavaPairRDD<String,Double> state2cityPerc = rddHS.
+				mapToPair(hs -> new Tuple2<>(hs.getState(), hs.getPercentCompletedHS()));
+	
+		JavaPairRDD<String,Integer> state2count = state2cityPerc
+				.mapToPair(tup -> new Tuple2<>(tup._1(),1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		JavaPairRDD<String,Double> state2meanHS = state2cityPerc
+				.reduceByKey((s1,s2) -> s1+s2)
+				.join(state2count)
+				.mapToPair(tup -> new Tuple2<>(tup._1(), tup._2()._1() / tup._2()._2()));
+		
+		return state2meanHS;
 	}
 
 	
@@ -78,33 +115,5 @@ public class Analytics {
 		return sorted;
 	}
 	
-	private void printVictimsByRace(JavaRDD<Tuple2<Character, Integer>> sorted) {
-		List<Tuple2<Character, Integer>> out = sorted.collect();
-		for(Tuple2<Character, Integer> p : out)
-			System.out.println(p._1() + ": " + p._2());
-	}
-	
-	private void printMostCommonNames(JavaRDD<Tuple2<String, Integer>> sorted) {
-		List<Tuple2<String, Integer>> out = sorted.collect();
-		for(Tuple2<String, Integer> p : out)
-			System.out.println(p._1() + ": " + p._2());
-	}
-	
-	private void printPoorestStates(JavaRDD<Tuple2<String, Double>> sorted) {
-		List<Tuple2<String, Double>> out = sorted.collect();
-		for(Tuple2<String, Double> p : out)
-			System.out.println(p._1() + ": " + p._2());
-	}
-
-	
-	private void printNumberOfParsedRecords(JavaRDD<MedianHouseholdIncome> raw1, JavaRDD<PercentagePeoplePoverty> raw2,
-			JavaRDD<PercentOver25HighSchool> raw3, JavaRDD<PoliceKilling> raw4, JavaRDD<ShareRaceCity> raw5) {
-		System.out.println("Parsed Records by File");
-		System.out.println("MDI: " + raw1.collect().size());
-		System.out.println("PPP: " + raw2.collect().size());
-		System.out.println("PO25HS: " + raw3.collect().size());
-		System.out.println("PK: " + raw4.collect().size());
-		System.out.println("SRC: " + raw5.collect().size());
-	}
 	
 }
