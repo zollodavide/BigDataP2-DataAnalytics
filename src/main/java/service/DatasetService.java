@@ -4,6 +4,9 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import com.datastax.driver.core.Session;
+import com.datastax.spark.connector.cql.CassandraConnector;
+
 import model.MedianHouseholdIncome;
 import model.PercentOver25HighSchool;
 import model.PercentagePeoplePoverty;
@@ -24,6 +27,7 @@ public class DatasetService {
 	
 	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP) {
 		SparkConf conf = new SparkConf().setAppName("DataAnalytics");
+		
 		this.sparkContext = new JavaSparkContext(conf);
 		
 		this.medianIncome = getMedianIncomeRecords(sparkContext, fileMI);
@@ -32,14 +36,16 @@ public class DatasetService {
 		this.policeKilling = getPoliceKillingRecords(sparkContext, filePK);
 		this.shareRace = getShareRaceRecords(sparkContext, fileSR);
 		this.statePopulation = getStatePopulationRecords(sparkContext, fileSP);
+		
 	}
+	
 
 	private JavaRDD<ShareRaceCity> getShareRaceRecords(JavaSparkContext sc, String fileSR) {
 		JavaRDD<ShareRaceCity> raw5= sc.textFile(fileSR).map(line -> Parser.parseShareRaceTable(line))
 				.filter(stock -> stock!=null);
 		return raw5;
 	}
-	
+	//Qui prendo e metto nell'RDD i record del file PoliceKilling
 	private JavaRDD<PoliceKilling> getPoliceKillingRecords(JavaSparkContext sc, String filePK) {
 		JavaRDD<PoliceKilling> raw4 = sc.textFile(filePK).map(line -> Parser.parsePoliceKillingTable(line))
 				.filter(record -> record!=null);

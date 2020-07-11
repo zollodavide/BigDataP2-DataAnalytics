@@ -38,6 +38,18 @@ public class Printer {
 		sb.append(string.toString()+"\n");
 	}
 	
+	public void printVictime4state(JavaRDD<Tuple2<String, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+		
+		string.append("******** KILLED PEOPLE FOR STATE ********\n");
+		List<Tuple2<String,Integer>> out = sorted.collect();
+		for(Tuple2<String, Integer>p :out)
+			string.append(p._1() + ":" + p._2() +"\n");
+		if(print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+				
+	}
 	public void printMostCommonNames(JavaRDD<Tuple2<String, Integer>> sorted, boolean print) {
 		StringBuilder string = new StringBuilder();
 
@@ -76,6 +88,103 @@ public class Printer {
 			System.out.println(string);
 		sb.append(string.toString()+"\n");
 	}
+	
+	
+	public void printMostCommonMannerOfDeath(JavaRDD<Tuple2<String, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+		
+		string.append("******** MOST COMMON MANNER OF DEATH ********\n");
+		List<Tuple2<String, Integer>> out = sorted.collect();
+		for(Tuple2<String, Integer>  p : out)
+			string.append(p._1() + ":" + p._2()+"\n");
+		
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	public void printDangerousCities (JavaRDD<Tuple2<String, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+		
+		string.append("******** MOST DANGEROUS CITIES********\n");
+		List<Tuple2<String, Integer>> out = sorted.collect();
+		for(Tuple2<String, Integer> p : out)
+			string.append(p._1() + ":" + p._2()+"\n");
+		
+		if(print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+
+	public void printCountBodyCamera (JavaRDD<Tuple2<Boolean, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+		
+		string.append("******** COUNT IF IS PRESENT BODY CAMERA********\n");
+		List<Tuple2<Boolean, Integer>> out = sorted.collect();
+		for(Tuple2<Boolean, Integer> p : out)
+			string.append(p._1() + ":" + p._2()+"\n");
+		
+		if(print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	public void printCommonWeapon (JavaRDD<Tuple2<String, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+		
+		string.append("******** COMMON WEAPON USE********\n");
+		List<Tuple2<String, Integer>> out = sorted.collect();
+		for(Tuple2<String, Integer> p : out)
+			string.append(p._1() + ":" + p._2()+"\n");
+		
+		if(print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	public void printVictimGender(JavaRDD<Tuple2<Character, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+
+		string.append("******** GENDER OF VICTIM ********\n");
+		List<Tuple2<Character, Integer>> out = sorted.collect();
+		for(Tuple2<Character, Integer> p : out)
+			string.append(p._1() + ": " + p._2()+"\n");
+
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	public void printMeanAge4Race(JavaRDD<Tuple2<Character, Double>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+
+		string.append("******** MEAN AGE KILLED FOR RACE ********\n");
+		List<Tuple2<Character,Double>> out = sorted.collect();
+		for(Tuple2<Character, Double> p : out)
+			string.append(p._1() + ":" + p._2() + "\n");
+
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	
+	//Momentaneo da sistemare
+	
+//	public void printMeanAge4race (JavaRDD<Tuple2<Character, Integer>> calculateMeanAgeWithRace, boolean print) {
+//		StringBuilder string = new StringBuilder();
+//		
+//		string.append("******** COMMON WEAPON USE********\n");
+//		List<Tuple2<Character, Integer>> out = calculateMeanAgeWithRace.collect();
+//		for(Tuple2<Character, Integer> p : out)
+//			string.append(p._1() + ":" + p._2()+"\n");
+//		
+//		if(print)
+//			System.out.println(string);
+//		sb.append(string.toString()+"\n");
+//	}
+	
 	
 	
 //	public void printNumberOfParsedRecords(JavaRDD<MedianHouseholdIncome> raw1, JavaRDD<PercentagePeoplePoverty> raw2,
