@@ -9,18 +9,11 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
-import org.bson.BSONObject;
-import org.bson.BasicBSONObject;
 
 import model.*;
 import scala.Tuple2;
 import service.DatasetService;
 import utility.Printer;
-
-import com.datastax.spark.connector.cql.CassandraConnector;
-import com.datastax.spark.connector.japi.CassandraJavaUtil;
-import com.mongodb.spark.MongoSpark;
-import com.mongodb.spark.config.WriteConfig;
 
 public class Analytics {
 

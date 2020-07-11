@@ -4,14 +4,12 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import com.datastax.driver.core.Session;
-import com.datastax.spark.connector.cql.CassandraConnector;
-
 import model.MedianHouseholdIncome;
 import model.PercentOver25HighSchool;
 import model.PercentagePeoplePoverty;
 import model.PoliceKilling;
 import model.ShareRaceCity;
+import model.StateCodes;
 import model.StatePopulation;
 import utility.Parser;
 
@@ -23,9 +21,10 @@ public class DatasetService {
 	private JavaRDD<PoliceKilling> policeKilling;
 	private JavaRDD<ShareRaceCity> shareRace;
 	private JavaRDD<StatePopulation> statePopulation;
+	private JavaRDD<StateCodes> stateCodes;
 	private JavaSparkContext sparkContext;
 	
-	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP) {
+	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC) {
 		SparkConf conf = new SparkConf().setAppName("DataAnalytics");
 		
 		this.sparkContext = new JavaSparkContext(conf);
@@ -36,7 +35,7 @@ public class DatasetService {
 		this.policeKilling = getPoliceKillingRecords(sparkContext, filePK);
 		this.shareRace = getShareRaceRecords(sparkContext, fileSR);
 		this.statePopulation = getStatePopulationRecords(sparkContext, fileSP);
-		
+		this.stateCodes = getStateCodesRecords(sparkContext, fileSC);
 	}
 	
 
@@ -80,6 +79,12 @@ public class DatasetService {
 		return raw5;
 	}
 	
+	private JavaRDD<StateCodes> getStateCodesRecords(JavaSparkContext sc, String fileSC) {
+		JavaRDD<StateCodes> raw1= sc.textFile(fileSC).map(line -> Parser.parseStateCodesTable(line))
+				.filter(record-> record!=null);
+		return raw1;
+	}
+	
 	public void closeSparkContext() {
 		this.sparkContext.close();
 	}
@@ -106,6 +111,11 @@ public class DatasetService {
 
 	public JavaRDD<StatePopulation> getStatePopulation() {
 		return statePopulation;
+	}
+
+
+	public JavaRDD<StateCodes> getStateCodes() {
+		return stateCodes;
 	}
 	
 	

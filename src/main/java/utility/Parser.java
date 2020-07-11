@@ -132,5 +132,19 @@ public class Parser {
 		return out;
 	}
 	
+	
+	public static StateCodes parseStateCodesTable(String line) {
+		String[] parts = line.split(",");
+		StateCodes out = new StateCodes();
+		try {
+			out.setName(parts[0]);
+			out.setAbbreviation(parts[1]);
+			out.setCode(parts[2]);
+		} catch (Exception e) {
+			System.out.println(e);   ///ERRORE DI PARSING
+			return null;
+		}
+		return out;
+	}
 
 }
