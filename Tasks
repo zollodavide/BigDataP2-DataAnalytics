@@ -8,15 +8,6 @@ SIMPLE TASKS (CAN BE USED FOR VISUALIZATION):
 6. (DONE) Killed people count by race
 7. (DONE - SEE BELOW) Killed people race in proportion to their population in the state 
 		-Proportions are too low and maybe irrelevant (e.g. results: 0,00002%)
-<<<<<<< HEAD
-8.  (DONE) Most Common Manner of death
-9.  (DONE) Dangerous Cities (AND STATES)
-10. (DONE)Killed people gender
-11. (DONE)Killed average age by race 
-12. (DONE)Most common weapon of victim
-13. (DONE) Police Body Camera
-14. Mental illness vs threat level in killings 
-=======
 8.  Most Common Manner of death
 9.  Dangerous Cities and States
 10. Killed people gender
@@ -24,8 +15,6 @@ SIMPLE TASKS (CAN BE USED FOR VISUALIZATION):
 12. Most common weapon of victim
 13. Police Body Camera
 14. Mental illness vs threat level in killings
->>>>>>> 0821fce9a0cdc29522eceb969addd7102a718ad2
-
 
 
 
@@ -34,12 +23,31 @@ ANALYSIS TASKS:
 
 1. Is there a police vs race problem in the US? For making such a conclusion one should analyze how many
 	unjust killings occured against a specific race.
-	
-	
 What is an unjust kill? When the victim is unarmed, the threat level is not attack and 
-	the victim is not trying to run away.
-	
- 
+	the victim is not trying to run away. 
+Compare total unjust killings with every race.
+Top states with most unjust killings (vs race).
+
+1.5. Suspicious police officer: No body camera, unarmed victim, no threat level (, race of victim)
+
+2. Relation in states between: 
+	High school rate vs poverty rate vs (vs kill rate?)
+	 -> possible conclusion: low high school graduation rate -> high criminality
+   	Killings in states with high Unemployment rate vs signs of mental illness
+   	 -> possible conclusion: high unemployment rate -> more mental illness
+	 
+3. GENERAL FACTS:
+	 Median household income in the US. 
+	 Poverty rate in the US.
+	 Graduation Rate in the US.
+	 Share Race in the US.
+	 Unemployment Rate in the US.
+	 
+
+Why is this analysis important:
+If the results of the analysis point to the fact that there's a race vs police problem, you could use 
+this information to tackle the problem. In states with high a ratio, one could enforce more police control,
+or even defund police stations.
 
 
 
