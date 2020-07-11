@@ -40,6 +40,7 @@ public class Analytics {
 		
 		JavaRDD<Tuple2<String, Double>> sortedPoorestStates = 
 				calculatePoorestStates(this.datasetService.getPercentagePoverty());
+		
 		JavaRDD<Tuple2<String, Integer>> sortedCommonVictimNames = 
 				calculateMostCommonVictimNames(this.datasetService.getPoliceKilling());
 		JavaRDD<Tuple2<String, Integer>> sortedCommonMannerOfDeath = 

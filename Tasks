@@ -8,6 +8,7 @@ SIMPLE TASKS (CAN BE USED FOR VISUALIZATION):
 6. (DONE) Killed people count by race
 7. (DONE - SEE BELOW) Killed people race in proportion to their population in the state 
 		-Proportions are too low and maybe irrelevant (e.g. results: 0,00002%)
+<<<<<<< HEAD
 8.  (DONE) Most Common Manner of death
 9.  (DONE) Dangerous Cities (AND STATES)
 10. (DONE)Killed people gender
@@ -15,6 +16,15 @@ SIMPLE TASKS (CAN BE USED FOR VISUALIZATION):
 12. (DONE)Most common weapon of victim
 13. (DONE) Police Body Camera
 14. Mental illness vs threat level in killings 
+=======
+8.  Most Common Manner of death
+9.  Dangerous Cities and States
+10. Killed people gender
+11. Killed average age by race
+12. Most common weapon of victim
+13. Police Body Camera
+14. Mental illness vs threat level in killings
+>>>>>>> 0821fce9a0cdc29522eceb969addd7102a718ad2
 
 
 
