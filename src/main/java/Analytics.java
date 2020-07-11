@@ -57,7 +57,7 @@ public class Analytics {
 				calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
 		JavaPairRDD<String, Tuple2<Double, Double>> educationVSpoverty = 
 				calculateEducationVsPoverty(this.datasetService.getPercentHighSchool(), this.datasetService.getPercentagePoverty());
-		
+	
 		JavaRDD<Tuple2<Character, Double>> sortedAgeRace =
 				calculateMeanAgeWithRace(this.datasetService.getPoliceKilling());
 	 
@@ -84,7 +84,7 @@ public class Analytics {
 //		printer.printCommonWeapon(sortedCommonWeapon, false);
 //		printer.printVictime4state(sortedVictimByState, false);
 //		printer.printVictimGender(sortedVictimGender, false);
-		printer.printMeanAge4Race(sortedAgeRace, true);
+//		printer.printMeanAge4Race(sortedAgeRace, false);
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
 		
 	}
@@ -156,6 +156,33 @@ public class Analytics {
 				
 		return state2educ2poor;
 	}
+	
+	//Per ogni razza devo identificare l'arma pi utilizzata (ex: A: Gun)
+	private JavaPairRDD<Character,Tuple2<String, Integer>> calculateMostArmedUse4Race(JavaRDD<PoliceKilling> rdd){
+		
+		JavaPairRDD<Character, String> raceWithArm = rdd
+				.mapToPair(pk -> new Tuple2<>(pk.getRace(), pk.getArmed()));
+
+		
+		JavaPairRDD<String, Integer> countWeapon = raceWithArm
+				.mapToPair(tup -> new Tuple2<>(tup._1() + " " + tup._2(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		//Per ogni razza prendere l' arma più utilizzata
+		JavaPairRDD<Character, Integer> maxWeaponUse = countWeapon
+				.mapToPair(tup -> new Tuple2<>(tup._1(), max(tup._2())));
+		
+		
+		
+//	
+//		JavaPairRDD<Character, Tuple2<String, Integer>> mostUseArm = countArm
+//				.join(raceWithArm)
+//      			.mapToPair(tup -> new Tuple2<>(tup._1(), tup._2()._1()));
+	
+
+		return mostUseArm;
+		
+	}
 
 	private JavaPairRDD<String, Double> calculateStateMeanEducation(JavaRDD<PercentOver25HighSchool> rddHS) {
 		
@@ -174,11 +201,8 @@ public class Analytics {
 		return state2meanHS;
 	}
 	
-	//Calcolare età media uccisa per razza, quindi per ogni razza ho la media dell'eta
-	//L'output deve essere : A: 23,5-----H:25.8 etc.. devo contare quante persone ci sono per la razza e fare la somma di tutte l'età
-	// per ciascuna razze e poi fare l'RDD nel quale stampo la razza e faccio la media dei due valori calcolati in precedenza
+
 	private JavaRDD<Tuple2<Character, Double>> calculateMeanAgeWithRace(JavaRDD<PoliceKilling> rdd){
-		//In teoria dovrebbe esssere double, devo capire come fare il cast
 		
 		JavaPairRDD<Character, Integer> age4race = rdd
 				.filter(f -> f.getAge() > -1)
@@ -209,8 +233,6 @@ public class Analytics {
 	}
 	
 	
-
-	
 	private JavaRDD<Tuple2<String, Integer>> calculateMostCommonVictimNames(JavaRDD<PoliceKilling> rdd) {
 		
 		JavaPairRDD<String, Integer> name2count = rdd
@@ -227,10 +249,6 @@ public class Analytics {
 	}
 	
 
-	
-	
-	
-	
 	private JavaRDD<Tuple2<Character,Integer>> calculateKilledPeopleByRace(JavaRDD<PoliceKilling> rdd) {
 		
 		JavaPairRDD<Character, Integer> race2count = rdd
@@ -272,7 +290,7 @@ public class Analytics {
 		return sorted;
 		
 	}
-	//Devo creare RDD per analizzare se si aveva la body camera o no, dove il campo è costituito da un booleano true o false, posso fare un count sui true e uno sui false
+
 	private JavaRDD<Tuple2<Boolean, Integer>> bodyCameraCheck(JavaRDD<PoliceKilling> rdd){
 		
 		JavaPairRDD<Boolean, Integer> countBodyCamera = rdd
@@ -315,6 +333,7 @@ public class Analytics {
 
 	
 	}
+	
 
 	
 }

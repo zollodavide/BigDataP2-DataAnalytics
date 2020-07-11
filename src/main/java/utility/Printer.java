@@ -169,6 +169,19 @@ public class Printer {
 		sb.append(string.toString()+"\n");
 	}
 	
+//	public void printMentaIllnessVSThreatLevel(JavaRDD<Tuple2<Boolean, String>> sorted, boolean print) {
+//		StringBuilder string = new StringBuilder();
+//
+//		string.append("******** MENTAL ILLNESS VS THREAT LEVEL ********\n");
+//		List<Tuple2<Boolean,String>> out = sorted.collect();
+//		for(Tuple2<Boolean, String> p : out)
+//			string.append(p._1() + ":" + p._2() + "\n");
+//
+//		if (print)
+//			System.out.println(string);
+//		sb.append(string.toString()+"\n");
+//	}
+	
 	
 	//Momentaneo da sistemare
 	
