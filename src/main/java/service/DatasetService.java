@@ -4,9 +4,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import com.datastax.driver.core.Session;
-import com.datastax.spark.connector.cql.CassandraConnector;
-
 import model.MedianHouseholdIncome;
 import model.PercentOver25HighSchool;
 import model.PercentagePeoplePoverty;
