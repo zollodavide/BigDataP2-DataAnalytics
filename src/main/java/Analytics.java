@@ -21,8 +21,8 @@ public class Analytics {
 	private Printer printer;
 	
 	
-	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP) {
-		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP);
+	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC) {
+		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP, fileSC);
 		this.printer = new Printer();
 	}
 	
@@ -151,31 +151,31 @@ public class Analytics {
 	}
 	
 	//Per ogni razza devo identificare l'arma pi utilizzata (ex: A: Gun)
-	private JavaPairRDD<Character,Tuple2<String, Integer>> calculateMostArmedUse4Race(JavaRDD<PoliceKilling> rdd){
-		
-		JavaPairRDD<Character, String> raceWithArm = rdd
-				.mapToPair(pk -> new Tuple2<>(pk.getRace(), pk.getArmed()));
-
-		
-		JavaPairRDD<String, Integer> countWeapon = raceWithArm
-				.mapToPair(tup -> new Tuple2<>(tup._1() + " " + tup._2(), 1))
-				.reduceByKey((s1,s2) -> s1+s2);
-		
-		//Per ogni razza prendere l' arma più utilizzata
-		JavaPairRDD<Character, Integer> maxWeaponUse = countWeapon
-				.mapToPair(tup -> new Tuple2<>(tup._1(), max(tup._2())));
-		
-		
-		
+//	private JavaPairRDD<Character,Tuple2<String, Integer>> calculateMostArmedUse4Race(JavaRDD<PoliceKilling> rdd){
+//		
+//		JavaPairRDD<Character, String> raceWithArm = rdd
+//				.mapToPair(pk -> new Tuple2<>(pk.getRace(), pk.getArmed()));
+//
+//		
+//		JavaPairRDD<String, Integer> countWeapon = raceWithArm
+//				.mapToPair(tup -> new Tuple2<>(tup._1() + " " + tup._2(), 1))
+//				.reduceByKey((s1,s2) -> s1+s2);
+//		
+//		//Per ogni razza prendere l' arma più utilizzata
+//		JavaPairRDD<Character, Integer> maxWeaponUse = countWeapon
+//				.mapToPair(tup -> new Tuple2<>(tup._1(), max(tup._2())));
+//		
+//		
+//		
+////	
+////		JavaPairRDD<Character, Tuple2<String, Integer>> mostUseArm = countArm
+////				.join(raceWithArm)
+////      			.mapToPair(tup -> new Tuple2<>(tup._1(), tup._2()._1()));
 //	
-//		JavaPairRDD<Character, Tuple2<String, Integer>> mostUseArm = countArm
-//				.join(raceWithArm)
-//      			.mapToPair(tup -> new Tuple2<>(tup._1(), tup._2()._1()));
-	
-
-		return mostUseArm;
-		
-	}
+//
+//		return mostUseArm;
+//		
+//	}
 
 	private JavaPairRDD<String, Double> calculateStateMeanEducation(JavaRDD<PercentOver25HighSchool> rddHS) {
 		
