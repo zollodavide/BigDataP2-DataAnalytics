@@ -1,8 +1,27 @@
 package service;
 
+import java.io.File;
+import java.util.List;
+
 import org.apache.spark.SparkConf;
+import org.apache.spark.SparkContext;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.ml.classification.LogisticRegression;
+import org.apache.spark.ml.classification.OneVsRest;
+import org.apache.spark.ml.classification.OneVsRestModel;
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator;
+import org.apache.spark.mllib.regression.LabeledPoint;
+import org.apache.spark.mllib.util.MLUtils;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Metadata;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 
 import model.MedianHouseholdIncome;
 import model.PercentOver25HighSchool;
@@ -11,6 +30,7 @@ import model.PoliceKilling;
 import model.ShareRaceCity;
 import model.StateCodes;
 import model.StatePopulation;
+import scala.Tuple2;
 import utility.Parser;
 
 public class DatasetService {
@@ -23,6 +43,7 @@ public class DatasetService {
 	private JavaRDD<StatePopulation> statePopulation;
 	private JavaRDD<StateCodes> stateCodes;
 	private JavaSparkContext sparkContext;
+	private JavaRDD<LabeledPoint> pkLabeledPoints;
 	
 	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC) {
 		SparkConf conf = new SparkConf().setAppName("DataAnalytics");
@@ -36,6 +57,8 @@ public class DatasetService {
 		this.shareRace = getShareRaceRecords(sparkContext, fileSR);
 		this.statePopulation = getStatePopulationRecords(sparkContext, fileSP);
 		this.stateCodes = getStateCodesRecords(sparkContext, fileSC);
+//		this.pkLabeledPoints = getLabeledPoints(sparkContext, filePK);
+		getLabeledPoints(sparkContext, filePK);
 	}
 	
 
@@ -85,6 +108,70 @@ public class DatasetService {
 		return raw1;
 	}
 	
+	
+	private void getLabeledPoints(JavaSparkContext sc, String filePK){
+		
+		JavaPairRDD<String, ShareRaceCity> shared = getShareRace().mapToPair(f-> new Tuple2<>(f.getCity() + " " + f.getState(), f));
+		
+		JavaPairRDD<String,PoliceKilling> rdd = getPoliceKilling()
+				.filter(f -> f.getRace()!='?' && f.getRace()!='O')
+				.filter(f -> f.getAge() >0)
+				.mapToPair(f -> new Tuple2<>(f.getCity() + " " + f.getState(), f ));
+		
+		
+		List<String> tb = rdd
+			.join(shared)
+			.map(f -> f._2()._1().getRace() + " " + 
+				 " 1:" + f._2()._1().getAge() +
+				 " 2:" + f._2()._2().getShareAsian() +
+				 " 3:" + f._2()._2().getShareBlack() +
+				 " 4:" + f._2()._2().getShareHispanic() + 
+				 " 5:" + f._2()._2().getShareNativeAmerican() + 
+				 " 6:" + f._2()._2().getShareWhite() )
+			.collect();
+//		
+//		for(String s : tb)
+//			System.out.println(s);
+
+		SparkSession ss = new SparkSession(JavaSparkContext.toSparkContext(sc));
+		
+		Dataset<Row> data = ss.read().format("libsvm").load("input/MLdata.txt");
+		System.out.println(data.count());
+		
+		 // generate the train/test split.
+	    Dataset<Row>[] tmp = data.randomSplit(new double[]{0.8, 0.2});
+	    Dataset<Row> train = tmp[0];
+	    Dataset<Row> test = tmp[1];
+	    
+	 // configure the base classifier.
+	    LogisticRegression classifier = new LogisticRegression()
+	      .setMaxIter(10)
+	      .setTol(1E-6)
+	      .setFitIntercept(true);
+
+	    // instantiate the One Vs Rest Classifier.
+	    OneVsRest ovr = new OneVsRest().setClassifier(classifier);
+
+	    // train the multiclass model.
+	    OneVsRestModel ovrModel = ovr.fit(train);
+
+	    // score the model on test data.
+	    Dataset<Row> predictions = ovrModel.transform(test)
+	      .select("prediction", "label");
+
+	    // obtain evaluator.
+	    MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
+	            .setMetricName("accuracy");
+
+	    // compute the classification error on test data.
+	    double accuracy = evaluator.evaluate(predictions);
+	    System.out.println("Test Error = " + accuracy);
+//	    evaluator.
+	    
+	    System.out.println("Test Error = " + (1 - accuracy));
+	
+	}
+	
 	public void closeSparkContext() {
 		this.sparkContext.close();
 	}
@@ -117,6 +204,11 @@ public class DatasetService {
 	public JavaRDD<StateCodes> getStateCodes() {
 		return stateCodes;
 	}
+
+//
+//	public JavaRDD<LabeledPoint> getPkLabeledPoints() {
+//		return pkLabeledPoints;
+//	}
 	
 	
 	
