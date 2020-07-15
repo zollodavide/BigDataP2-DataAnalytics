@@ -22,8 +22,8 @@ public class Analytics {
 	private Printer printer;
 	
 	
-	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP) {
-		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP);
+	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC) {
+		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP, fileSC);
 		this.printer = new Printer();
 	}
 	
