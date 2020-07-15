@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,10 @@ public class Analytics {
 		
 		JavaRDD<Tuple2<String, Double>> sortedState= 
 				calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(), this.datasetService.getStatePopulation());
+		JavaRDD<Tuple2<Integer, Integer>> sortedMonth =
+				killedByMonth(this.datasetService.getPoliceKilling());
+		JavaRDD<Tuple2<String,Double>> sortedAsianByState = 
+				shareRaceAsianByState(this.datasetService.getShareRace());
 		
 		
 		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
@@ -76,8 +81,10 @@ public class Analytics {
 //		printer.printCountBodyCamera(sortedBodyCamera, false);
 //		printer.printCommonWeapon(sortedCommonWeapon, false);
 //		printer.printVictime4state(sortedVictimByState, false);
-//		printer.printVictimGender(sortedVictimGender, false);
+//		printer.printVictimGender(sortedVictimGender, true);
 //		printer.printMeanAge4Race(sortedAgeRace, false);
+//		printer.printKilledByMOnth(sortedMonth, true);
+		printer.printRaceAsian(sortedAsianByState, true);
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
 		
 	}
@@ -151,31 +158,31 @@ public class Analytics {
 	}
 	
 	//Per ogni razza devo identificare l'arma pi utilizzata (ex: A: Gun)
-	private JavaPairRDD<Character,Tuple2<String, Integer>> calculateMostArmedUse4Race(JavaRDD<PoliceKilling> rdd){
-		
-		JavaPairRDD<Character, String> raceWithArm = rdd
-				.mapToPair(pk -> new Tuple2<>(pk.getRace(), pk.getArmed()));
-
-		
-		JavaPairRDD<String, Integer> countWeapon = raceWithArm
-				.mapToPair(tup -> new Tuple2<>(tup._1() + " " + tup._2(), 1))
-				.reduceByKey((s1,s2) -> s1+s2);
-		
-		//Per ogni razza prendere l' arma più utilizzata
-		JavaPairRDD<Character, Integer> maxWeaponUse = countWeapon
-				.mapToPair(tup -> new Tuple2<>(tup._1(), max(tup._2())));
-		
-		
-		
+//	private JavaPairRDD<Character,Tuple2<String, Integer>> calculateMostArmedUse4Race(JavaRDD<PoliceKilling> rdd){
+//		
+//		JavaPairRDD<Character, String> raceWithArm = rdd
+//				.mapToPair(pk -> new Tuple2<>(pk.getRace(), pk.getArmed()));
+//
+//		
+//		JavaPairRDD<String, Integer> countWeapon = raceWithArm
+//				.mapToPair(tup -> new Tuple2<>(tup._1() + " " + tup._2(), 1))
+//				.reduceByKey((s1,s2) -> s1+s2);
+//		
+//		//Per ogni razza prendere l' arma più utilizzata
+//		JavaPairRDD<Character, Integer> maxWeaponUse = countWeapon
+//				.mapToPair(tup -> new Tuple2<>(tup._1(), max(tup._2())));
+//		
+//		
+//		
+////	
+////		JavaPairRDD<Character, Tuple2<String, Integer>> mostUseArm = countArm
+////				.join(raceWithArm)
+////      			.mapToPair(tup -> new Tuple2<>(tup._1(), tup._2()._1()));
 //	
-//		JavaPairRDD<Character, Tuple2<String, Integer>> mostUseArm = countArm
-//				.join(raceWithArm)
-//      			.mapToPair(tup -> new Tuple2<>(tup._1(), tup._2()._1()));
-	
-
-		return mostUseArm;
-		
-	}
+//
+//		return mostUseArm;
+//		
+//	}
 
 	private JavaPairRDD<String, Double> calculateStateMeanEducation(JavaRDD<PercentOver25HighSchool> rddHS) {
 		
@@ -322,9 +329,48 @@ public class Analytics {
 	
 	return sorted;
 			
+	}
+		
+	private JavaRDD<Tuple2<Integer, Integer>> killedByMonth(JavaRDD<PoliceKilling> rdd){
+		
+		JavaPairRDD<Integer, Integer> monthWithMostKill = rdd
+				.mapToPair(pk -> new Tuple2<>(pk.getDate().getMonth(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		
+		JavaRDD<Tuple2<Integer, Integer>> sorted = monthWithMostKill
+				.map(tup -> tup)
+				.sortBy(tup -> tup._1(), true, 1);
+		
+		return sorted;
+	}
 	
+	//Calcolato la media della distribuzione per ogni stato della razza Asiatica
+	private JavaRDD<Tuple2<String, Double>> shareRaceAsianByState(JavaRDD<ShareRaceCity> rddSR){
+		
+		JavaPairRDD<String,Integer> countAsian = rddSR
+				.mapToPair(sr -> new Tuple2<>(sr.getState(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		JavaPairRDD<String, Double> cityAsian = rddSR
+				.mapToPair(sr -> new Tuple2<>(sr.getState(), sr.getShareAsian()))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		JavaPairRDD<String,Double> meanRaceAsian4state = cityAsian
+				.reduceByKey((s1,s2) -> s1+s2)
+				.join(countAsian)
+				.mapToPair(tup -> new Tuple2<>(tup._1(), Double.valueOf(tup._2()._1() / tup._2()._2())));
+		
 
-	
+		JavaRDD<Tuple2<String, Double>> sorted = meanRaceAsian4state
+				.map(tup->tup)
+				.sortBy(tup -> tup._2(), false, 1);
+		
+		return sorted;
+		
+
+		
+		
+		
 	}
 	
 

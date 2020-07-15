@@ -24,7 +24,7 @@ public class DatasetService {
 	private JavaRDD<StateCodes> stateCodes;
 	private JavaSparkContext sparkContext;
 	
-	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC) {
+	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP) {
 		SparkConf conf = new SparkConf().setAppName("DataAnalytics");
 		
 		this.sparkContext = new JavaSparkContext(conf);
@@ -35,7 +35,7 @@ public class DatasetService {
 		this.policeKilling = getPoliceKillingRecords(sparkContext, filePK);
 		this.shareRace = getShareRaceRecords(sparkContext, fileSR);
 		this.statePopulation = getStatePopulationRecords(sparkContext, fileSP);
-		this.stateCodes = getStateCodesRecords(sparkContext, fileSC);
+		//this.stateCodes = getStateCodesRecords(sparkContext, fileSC);
 	}
 	
 

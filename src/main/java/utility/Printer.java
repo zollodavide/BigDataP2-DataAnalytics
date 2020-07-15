@@ -169,6 +169,34 @@ public class Printer {
 		sb.append(string.toString()+"\n");
 	}
 	
+	public void printKilledByMOnth(JavaRDD<Tuple2<Integer, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+
+		string.append("******** KILLED BY MONTH ********\n");
+		List<Tuple2<Integer,Integer>> out = sorted.collect();
+		for(Tuple2<Integer, Integer> p : out)
+			string.append(p._1() + ":" + p._2() + "\n");
+
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	public void printRaceAsian(JavaRDD<Tuple2<String, Double>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+
+		string.append("******** MEAN RACE ASIAN FOR STATE ********\n");
+		List<Tuple2<String,Double>> out = sorted.collect();
+		for(Tuple2<String, Double> p : out)
+			string.append(p._1() + ":" + p._2() + "\n");
+
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	
+	
 //	public void printMentaIllnessVSThreatLevel(JavaRDD<Tuple2<Boolean, String>> sorted, boolean print) {
 //		StringBuilder string = new StringBuilder();
 //

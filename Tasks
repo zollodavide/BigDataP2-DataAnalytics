@@ -14,7 +14,10 @@ SIMPLE TASKS (CAN BE USED FOR VISUALIZATION):
 11.(DONE)Killed average age by race
 12.(DONE)Most common weapon of victim
 13.(DONE)Police Body Camera
-14. Armed MOst use for RACE //Razza ariana: gun (dove il gun è sulla base di un calcolo è quella più utilizzata)
+	Share Race By State (tabella share race dice come è diviso, per ogni città la divisione delle razze, fare un aggregazione che fa la media 
+	di ogni città per ogni stato SOSPESO)
+	(DONE)Kills by Month ( in ogni mese quante uccisioni ci sono state)
+14. Armed Most use for RACE //Razza ariana: gun (dove il gun è sulla base di un calcolo è quella più utilizzata)
 
 
 
