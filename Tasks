@@ -119,4 +119,45 @@ MLDATA:
 1 -> B
 2 -> H
 3 -> A
-4 -> N 
+4 -> N
+
+
+PRIMA VERSIONE:
+Precision Score = 0.6763565891472868
+Test Error = 0.3236434108527132
+
+FEATURES: 
+Age 
+ShareRace
+ 
+ 
+SECONDA VERSIONE:
+Precision Score = 0.6833976833976834
+Test Error = 0.31660231660231664
+
+FEATURES: 
+Age 
+ShareRace
+PercentCompletedHS
+
+
+TERZA VERSIONE:
+Precision Score = 0.685
+Test Error = 0.315
+
+FEATURES: 
+Age 
+ShareRace
+PercentCompletedHS
+Poverty
+
+QUARTA VERSIONE:
+Precision Score = 0.69
+Test Error = 0.31
+
+FEATURES: 
+Age 
+ShareRace
+PercentCompletedHS
+Poverty
+Armed (ONE-HOT)
