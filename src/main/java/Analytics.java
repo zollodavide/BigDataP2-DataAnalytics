@@ -60,16 +60,16 @@ public class Analytics {
 
 		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
 		List<Tuple2<String,Double>>sdd = sortedState.collect();
-		
-		for(Tuple2<String,Double> a: sdd)
-			System.out.println(a._1() + ": " + a._2());
+//		
+//		for(Tuple2<String,Double> a: sdd)
+//			System.out.println(a._1() + ": " + a._2());
 //		printer.printVictimsByRace(sortedRaceVictims,true);
 //		printer.printMostCommonNames(sortedCommonVictimNames,false);
 //		printer.printPoorestStates(sortedPoorestStates,true);
 //		printer.printEducationVSPoverty(educationVSpoverty, true);
 //		printer.printAllResults();
 //		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
-		printer.printDangerousCities(sortedDangerousCities, true);
+//		printer.printDangerousCities(sortedDangerousCities, true);
 //		printer.printCountBodyCamera(sortedBodyCamera, true);
 //		printer.printCommonWeapon(sortedCommonWeapon, true);
 //		printer.printVictime4state(sortedVictimByState, false);

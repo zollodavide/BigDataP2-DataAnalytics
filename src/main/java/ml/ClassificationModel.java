@@ -56,7 +56,9 @@ public class ClassificationModel {
 				.join(hs)
 				.join(pov);
 
-		String arr[] = makeDictionary(join.map(f -> f._2()._1()._1()._1()));
+		String arr[] = makeArmDictionary(join.map(f -> f._2()._1()._1()._1()));
+		String arr2[] = makeNameDictionary(join.map(f -> f._2()._1()._1()._1()));
+
 		List<String> tb = join
 				.map(f ->  {
 
@@ -91,22 +93,32 @@ public class ClassificationModel {
 							" 8:" + f._2()._2().getPovertyRate();
 
 					String ss = "";
-					for(int i= 9; i<arr.length-1; i++) {
+					int i;
+					for(i= 9; i<arr.length-1; i++) {
 
 						if(arr[i].equals(f._2()._1()._1()._1().getArmed()))
 							ss = ss+ " "+ i+":" +"1";
 						else
 							ss = ss+ " "+ i+":" +"0";
 					}
-					s = s+ss;
+					
+					String sss = "";
+
+					for(i= i; i<arr2.length-1; i++) {
+
+						if(arr2[i].equals(f._2()._1()._1()._1().getName()))
+							sss = sss+ " "+ i+":" +"1";
+						else
+							sss = sss+ " "+ i+":" +"0";
+					}
+					s = s+ss+sss;
 					return s;
 				})
 				.collect();
 
-		System.out.println(tb.size());
-		//		
-		//		for(String s : tb)
-		//			System.out.println(s);
+//		System.out.println(tb.size());
+//		for(String s : tb)
+//			System.out.println(s);
 
 		SparkSession ss = new SparkSession(JavaSparkContext.toSparkContext(sc));
 
@@ -159,10 +171,32 @@ public class ClassificationModel {
 
 
 
-	private String[] makeDictionary(JavaRDD<PoliceKilling> rdd) {
+	private String[] makeArmDictionary(JavaRDD<PoliceKilling> rdd) {
 
 		Set<String> dic = (rdd
 				.mapToPair(f -> new Tuple2<>(f.getArmed(), 1))
+				.reduceByKey((s1,s2) -> s1+s2)
+				.collectAsMap()
+				.keySet()) ;
+
+
+		// Creating a hash set of strings 
+
+		int n = dic.size(); 
+		String arr[] = new String[n]; 
+
+		// Copying contents of s to arr[] 
+		System.arraycopy(dic.toArray(), 0, arr, 0, n); 
+
+		return arr;
+	}
+	
+	
+
+	private String[] makeNameDictionary(JavaRDD<PoliceKilling> rdd) {
+
+		Set<String> dic = (rdd
+				.mapToPair(f -> new Tuple2<>(f.getName().split(" ")[0], 1))
 				.reduceByKey((s1,s2) -> s1+s2)
 				.collectAsMap()
 				.keySet()) ;
