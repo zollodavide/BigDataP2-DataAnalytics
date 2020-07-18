@@ -106,7 +106,7 @@ public class ClassificationModel {
 
 					for(i= i; i<arr2.length-1; i++) {
 
-						if(arr2[i].equals(f._2()._1()._1()._1().getName()))
+						if(arr2[i].equals(f._2()._1()._1()._1().getName().split(" ")[0]))
 							sss = sss+ " "+ i+":" +"1";
 						else
 							sss = sss+ " "+ i+":" +"0";
