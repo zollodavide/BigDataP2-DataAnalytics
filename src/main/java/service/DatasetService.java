@@ -111,9 +111,6 @@ public class DatasetService {
 		return raw1;
 	}
 	
-	
-
-
 
 	public void closeSparkContext() {
 		this.sparkContext.close();
@@ -148,12 +145,6 @@ public class DatasetService {
 		return stateCodes;
 	}
 
-//
-//	public JavaRDD<LabeledPoint> getPkLabeledPoints() {
-//		return pkLabeledPoints;
-//	}
-	
-	
 	
 	
 }
