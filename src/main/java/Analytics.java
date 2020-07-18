@@ -80,7 +80,7 @@ public class Analytics {
 //		printer.printEducationVSPoverty(educationVSpoverty, true);
 //		printer.printAllResults();
 //		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
-//		printer.printDangerousCities(sortedDangerousCities, true);
+		printer.printDangerousCities(sortedDangerousCities, true);
 //		printer.printCountBodyCamera(sortedBodyCamera, true);
 //		printer.printCommonWeapon(sortedCommonWeapon, true);
 //		printer.printVictime4state(sortedVictimByState, false);
