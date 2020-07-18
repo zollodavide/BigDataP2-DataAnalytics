@@ -38,6 +38,20 @@ public class Printer {
 		sb.append(string.toString()+"\n");
 	}
 	
+	public void printStateMeanEducation(JavaPairRDD<String, Double> state2meanHS, boolean print) {
+		StringBuilder string = new StringBuilder();
+
+		string.append("******** MEAN STATE EDUCATION ********\n");
+		Map<String, Double> out = state2meanHS.collectAsMap();
+		for(String p : out.keySet())
+			string.append(p + ": " + out.get(p)+"\n");
+
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	
 	public void printVictime4state(JavaRDD<Tuple2<String, Integer>> sorted, boolean print) {
 		StringBuilder string = new StringBuilder();
 		
@@ -169,6 +183,40 @@ public class Printer {
 		sb.append(string.toString()+"\n");
 	}
 	
+	public void printKilledByMOnth(JavaRDD<Tuple2<Integer, Integer>> sorted, boolean print) {
+		StringBuilder string = new StringBuilder();
+
+		string.append("******** KILLED BY MONTH ********\n");
+		List<Tuple2<Integer,Integer>> out = sorted.collect();
+		for(Tuple2<Integer, Integer> p : out)
+			string.append(p._1() + ":" + p._2() + "\n");
+
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+	public void printAllRace4state(JavaPairRDD<String, Tuple2<Tuple2<Tuple2<Tuple2<Double,Double>, Double>, Double>, Double>> joinAll, boolean print) {
+		StringBuilder string = new StringBuilder();
+		
+		string.append("******** SHARE RACE BY STATE ********\n");
+		Map<String, Tuple2<Tuple2<Tuple2<Tuple2<Double,Double>, Double>, Double>, Double>> out = joinAll.collectAsMap();
+		for(String p : out.keySet())
+			string.append(p + ": ASIAN=" + out.get(p)._1()._1()._1()._1() +""+ ", WHITE=" + out.get(p)._1()._1()._1()._2() + 
+					""+ ", BLACK=" + out.get(p)._1()._1()._2() +""+ ",NATIVE AMERICAN=" + out.get(p)._1()._2()+
+					""+ ", HISPANIC=" + out.get(p)._2() +"\n"); 
+		//2-1-1-1-1 PRIMO DOUBLE
+		
+		if (print)
+			System.out.println(string);
+		sb.append(string.toString()+"\n");
+	}
+	
+
+	
+//
+//	
+//	
 //	public void printMentaIllnessVSThreatLevel(JavaRDD<Tuple2<Boolean, String>> sorted, boolean print) {
 //		StringBuilder string = new StringBuilder();
 //

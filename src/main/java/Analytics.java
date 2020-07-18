@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,8 @@ public class Analytics {
 	private Printer printer;
 	
 	
-	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC) {
-		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP, fileSC);
+	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP) {
+		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP);
 		this.printer = new Printer();
 	}
 	
@@ -33,7 +34,8 @@ public class Analytics {
 		
 		JavaRDD<Tuple2<String, Double>> sortedPoorestStates = 
 				calculatePoorestStates(this.datasetService.getPercentagePoverty());
-		
+		JavaPairRDD<String, Double> sortedMeanEducation =
+				calculateStateMeanEducation(this.datasetService.getPercentHighSchool());
 		JavaRDD<Tuple2<String, Integer>> sortedCommonVictimNames = 
 				calculateMostCommonVictimNames(this.datasetService.getPoliceKilling());
 		JavaRDD<Tuple2<String, Integer>> sortedCommonMannerOfDeath = 
@@ -59,25 +61,36 @@ public class Analytics {
 		
 		JavaRDD<Tuple2<String, Double>> sortedState= 
 				calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(), this.datasetService.getStatePopulation());
+		JavaRDD<Tuple2<Integer, Integer>> sortedMonth =
+				killedByMonth(this.datasetService.getPoliceKilling());
 		
+		JavaPairRDD<String, Tuple2<Tuple2<Tuple2<Tuple2<Double,Double>, Double>, Double>, Double>> sortedRace4state =
+				unionRace4State(this.datasetService.getShareRace());
+				
+//		
 		
 		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
 		List<Tuple2<String,Double>>sdd = sortedState.collect();
 		
 		for(Tuple2<String,Double> a: sdd)
 			System.out.println(a._1() + ": " + a._2());
-//		printer.printVictimsByRace(sortedRaceVictims,false);
+//		printer.printVictimsByRace(sortedRaceVictims,true);
 //		printer.printMostCommonNames(sortedCommonVictimNames,false);
-//		printer.printPoorestStates(sortedPoorestStates,false);
+//		printer.printPoorestStates(sortedPoorestStates,true);
 //		printer.printEducationVSPoverty(educationVSpoverty, true);
 //		printer.printAllResults();
-//		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, false);
-//		printer.printDangerousCities(sortedDangerousCities, false);
-//		printer.printCountBodyCamera(sortedBodyCamera, false);
-//		printer.printCommonWeapon(sortedCommonWeapon, false);
+//		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
+//		printer.printDangerousCities(sortedDangerousCities, true);
+//		printer.printCountBodyCamera(sortedBodyCamera, true);
+//		printer.printCommonWeapon(sortedCommonWeapon, true);
 //		printer.printVictime4state(sortedVictimByState, false);
-//		printer.printVictimGender(sortedVictimGender, false);
-//		printer.printMeanAge4Race(sortedAgeRace, false);
+//		printer.printVictimGender(sortedVictimGender, true);
+//		printer.printMeanAge4Race(sortedAgeRace, true);
+//		printer.printKilledByMOnth(sortedMonth, true);
+//		printer.printAllRace4state(sortedRace4state, true);
+//		printer.printVictime4state(sortedVictimByState, true);
+//		printer.printStateMeanEducation(sortedMeanEducation, true);
+
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
 		
 	}
@@ -322,10 +335,153 @@ public class Analytics {
 	
 	return sorted;
 			
+	}
+		
+	private JavaRDD<Tuple2<Integer, Integer>> killedByMonth(JavaRDD<PoliceKilling> rdd){
+		
+		JavaPairRDD<Integer, Integer> monthWithMostKill = rdd
+				.mapToPair(pk -> new Tuple2<>(pk.getDate().getMonth(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		
+		
+		JavaRDD<Tuple2<Integer, Integer>> sorted = monthWithMostKill
+				.map(tup -> tup)
+				.sortBy(tup -> tup._1(), true, 1);
+		
+		return sorted;
+	}
+	
+	//Calcolato la media della distribuzione per ogni stato della razza Asiatica
+	private JavaPairRDD<String, Double> shareRaceAsianByState(JavaRDD<ShareRaceCity> rddSR){
+		
+		JavaPairRDD<String,Integer> countAsian = rddSR
+				.mapToPair(sr -> new Tuple2<>(sr.getState(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		JavaPairRDD<String, Double> stateAsian = rddSR
+			.mapToPair(sr -> new Tuple2<>(sr.getState(), sr.getShareAsian()))
+				.reduceByKey((s1,s2) -> s1+s2);		
+		JavaPairRDD<String,Double> meanRaceAsian4state = stateAsian
+				.reduceByKey((s1,s2) -> s1+s2)
+				.join(countAsian)
+				.mapToPair(tup -> new Tuple2<>(tup._1(), Double.valueOf(tup._2()._1() / tup._2()._2())));
+	
+
+		return meanRaceAsian4state;
+	
+	}
+	
+	private JavaPairRDD<String, Double> shareRaceWhiteByState(JavaRDD<ShareRaceCity> rddSR){
+		
+		JavaPairRDD<String,Integer> countWhite = rddSR
+				.mapToPair(sr -> new Tuple2<>(sr.getState(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		JavaPairRDD<String, Double> stateWhite = rddSR
+			.mapToPair(sr -> new Tuple2<>(sr.getState(), sr.getShareWhite()))
+				.reduceByKey((s1,s2) -> s1+s2);		
+		JavaPairRDD<String,Double> meanRaceWhite4state = stateWhite
+				.reduceByKey((s1,s2) -> s1+s2)
+				.join(countWhite)
+				.mapToPair(tup -> new Tuple2<>(tup._1(), Double.valueOf(tup._2()._1() / tup._2()._2())));
 	
 
 	
+		
+		return meanRaceWhite4state;
+		
+	
 	}
+	
+	private JavaPairRDD<String, Double> shareRaceBlackByState(JavaRDD<ShareRaceCity> rddSR){
+		
+		JavaPairRDD<String,Integer> countBlack = rddSR
+				.mapToPair(sr -> new Tuple2<>(sr.getState(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		JavaPairRDD<String, Double> stateBlack = rddSR
+			.mapToPair(sr -> new Tuple2<>(sr.getState(), sr.getShareBlack()))
+				.reduceByKey((s1,s2) -> s1+s2);		
+		JavaPairRDD<String,Double> meanRaceBlack4state = stateBlack
+				.reduceByKey((s1,s2) -> s1+s2)
+				.join(countBlack)
+				.mapToPair(tup -> new Tuple2<>(tup._1(), Double.valueOf(tup._2()._1() / tup._2()._2())));
+	
+
+	
+		
+		return meanRaceBlack4state;
+		
+	
+	}
+	
+	private JavaPairRDD<String, Double> shareRaceNativeAmericanByState(JavaRDD<ShareRaceCity> rddSR){
+			
+			JavaPairRDD<String,Integer> countNativeAmerican = rddSR
+					.mapToPair(sr -> new Tuple2<>(sr.getState(), 1))
+					.reduceByKey((s1,s2) -> s1+s2);
+			JavaPairRDD<String, Double> stateNativeAmerican = rddSR
+				.mapToPair(sr -> new Tuple2<>(sr.getState(), sr.getShareNativeAmerican()))
+					.reduceByKey((s1,s2) -> s1+s2);		
+			JavaPairRDD<String,Double> meanRaceNativeAmerican4state = stateNativeAmerican
+					.reduceByKey((s1,s2) -> s1+s2)
+					.join(countNativeAmerican)
+					.mapToPair(tup -> new Tuple2<>(tup._1(), Double.valueOf(tup._2()._1() / tup._2()._2())));
+		
+	
+		
+			
+			return meanRaceNativeAmerican4state;
+			
+		
+	}
+
+	private JavaPairRDD<String, Double> shareRaceHispanicByState(JavaRDD<ShareRaceCity> rddSR){
+		
+		JavaPairRDD<String,Integer> countHispanic = rddSR
+				.mapToPair(sr -> new Tuple2<>(sr.getState(), 1))
+				.reduceByKey((s1,s2) -> s1+s2);
+		JavaPairRDD<String, Double> stateHispanic = rddSR
+			.mapToPair(sr -> new Tuple2<>(sr.getState(), sr.getShareHispanic()))
+				.reduceByKey((s1,s2) -> s1+s2);		
+		JavaPairRDD<String,Double> meanRaceHispanic4state = stateHispanic
+				.reduceByKey((s1,s2) -> s1+s2)
+				.join(countHispanic)
+				.mapToPair(tup -> new Tuple2<>(tup._1(), Double.valueOf(tup._2()._1() / tup._2()._2())));
+	
+	
+	
+		
+		return meanRaceHispanic4state;
+		
+	
+	}
+	
+	
+	private JavaPairRDD<String, Tuple2<Tuple2<Tuple2<Tuple2<Double,Double>, Double>, Double>, Double>> unionRace4State(JavaRDD<ShareRaceCity> rddSR){
+		
+		JavaPairRDD<String, Double> asian4state = shareRaceAsianByState(rddSR);
+		JavaPairRDD<String, Double> white4state = shareRaceWhiteByState(rddSR);
+		JavaPairRDD<String, Double> black4state = shareRaceBlackByState(rddSR);
+		JavaPairRDD<String, Double> nativeAmerican4state = shareRaceNativeAmericanByState(rddSR);
+		JavaPairRDD<String, Double> hispanic4state = shareRaceHispanicByState(rddSR);
+
+
+		JavaPairRDD<String, Tuple2<Double, Double>> joinAsianWhite = asian4state
+				.join(white4state);
+		
+		JavaPairRDD<String, Tuple2<Tuple2<Double, Double>,Double>> joinAsWhBlack = joinAsianWhite
+				.join(black4state);
+		
+		JavaPairRDD<String, Tuple2<Tuple2<Tuple2<Double,Double>,Double>,Double>> joinAsWhBlNativeAmerican = joinAsWhBlack
+				.join(nativeAmerican4state);
+		
+		JavaPairRDD<String, Tuple2<Tuple2<Tuple2<Tuple2<Double,Double>, Double>, Double>, Double>> joinAll = joinAsWhBlNativeAmerican
+				.join(hispanic4state);
+		
+		return joinAll;
+		
+	
+	}
+
+	
 	
 
 	
