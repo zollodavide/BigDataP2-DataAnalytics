@@ -47,13 +47,11 @@ public class DatasetService {
 	private JavaRDD<StatePopulation> statePopulation;
 	private JavaRDD<StateCodes> stateCodes;
 	private JavaSparkContext sparkContext;
-	private JavaRDD<LabeledPoint> pkLabeledPoints;
 	
-	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC) {
+	public DatasetService(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC, String fileML) {
 		SparkConf conf = new SparkConf().setAppName("DataAnalytics");
 		
 		this.sparkContext = new JavaSparkContext(conf);
-		
 		this.medianIncome = getMedianIncomeRecords(sparkContext, fileMI);
 		this.percentagePoverty = getPercentagePovertyRecords(sparkContext, filePP);
 		this.percentHighSchool = getPercentHighSchoolRecords(sparkContext, filePHS);
@@ -61,8 +59,8 @@ public class DatasetService {
 		this.shareRace = getShareRaceRecords(sparkContext, fileSR);
 		this.statePopulation = getStatePopulationRecords(sparkContext, fileSP);
 		this.stateCodes = getStateCodesRecords(sparkContext, fileSC);
-//		this.pkLabeledPoints = getLabeledPoints(sparkContext, filePK);
-		getLabeledPoints(sparkContext, filePK);
+		
+		new ml.ClassificationModel(this.sparkContext, this, fileML);
 	}
 	
 
@@ -113,154 +111,7 @@ public class DatasetService {
 	}
 	
 	
-	private void getLabeledPoints(JavaSparkContext sc, String filePK){
-		
-		JavaPairRDD<String, ShareRaceCity> shared = getShareRace()
-				.mapToPair(f-> new Tuple2<>(f.getCity() + " " + f.getState(), f));
-		
-		JavaPairRDD<String,PoliceKilling> rdd = getPoliceKilling()
-				.filter(f -> f.getRace()!='?' && f.getRace()!='O')
-				.filter(f -> f.getAge() >0)
-				.filter(f -> !f.getArmed().isEmpty())
-				.mapToPair(f -> new Tuple2<>(f.getCity() + " " + f.getState(), f ));
-		
-		JavaPairRDD<String, PercentOver25HighSchool> hs = getPercentHighSchool()
-				.mapToPair(f -> new Tuple2<>(f.getCity() + " " + f.getState(), f));
-		
-//		JavaPairRDD<String, MedianHouseholdIncome> mhi = getMedianIncome()
-//				.mapToPair(f -> new Tuple2<>(f.getCity(), f));
-		
-		JavaPairRDD<String, PercentagePeoplePoverty> pov = getPercentagePoverty()
-				.mapToPair(f -> new Tuple2<>(f.getCity() + " " + f.getState(), f));
-		
-		
-		JavaPairRDD<String, Tuple2<Tuple2<Tuple2<PoliceKilling, ShareRaceCity>, PercentOver25HighSchool>, PercentagePeoplePoverty>> join = rdd
-			.join(shared)
-			.join(hs)
-			.join(pov);
-		
-		String arr[] = makeDictionary(join.map(f -> f._2()._1()._1()._1()));
-		List<String> tb = join
-			.map(f ->  {
-				
-				Character race = ' ';
-				
-				switch (f._2()._1()._1()._1().getRace()) {
-					case 'W':
-						race = '0';
-						break;
-					case 'B':
-						race = '1';
-						break;
-					case 'H':
-						race = '2';
-						break;
-					case 'A':
-						race = '3';
-						break;
-					case 'N':
-						race = '4';
-						break;
-				}
-				
-				
-				
-				String s = race + " " + 
-						" 1:" + f._2()._1()._1()._1().getAge() +
-						" 2:" + f._2()._1()._1()._2().getShareAsian() +
-						" 3:" + f._2()._1()._1()._2().getShareBlack() +
-						" 4:" + f._2()._1()._1()._2().getShareHispanic() + 
-						" 5:" + f._2()._1()._1()._2().getShareNativeAmerican() + 
-						" 6:" + f._2()._1()._1()._2().getShareWhite() + 
-						" 7:" + f._2()._1()._2().getPercentCompletedHS() +
-						" 8:" + f._2()._2().getPovertyRate();
-				
-				String ss = "";
-				for(int i= 9; i<arr.length-1; i++) {
-					
-					if(arr[i].equals(f._2()._1()._1()._1().getArmed()))
-						ss = ss+ " "+ i+":" +"1";
-					else
-						ss = ss+ " "+ i+":" +"0";
-				}
-				s = s+ss;
-				return s;
-			})
-			.collect();
-		
-		System.out.println(tb.size());
-//		
-//		for(String s : tb)
-//			System.out.println(s);
 
-		SparkSession ss = new SparkSession(JavaSparkContext.toSparkContext(sc));
-		
-		Dataset<Row> data = ss.read().format("libsvm").load("input/MLdata.txt");
-		System.out.println(data.count());
-		
-		 // generate the train/test split.
-	    Dataset<Row>[] tmp = data.randomSplit(new double[]{0.7, 0.3});
-	    Dataset<Row> train = tmp[0];
-	    Dataset<Row> test = tmp[1];
-	    
-	 // configure the base classifier.
-	    LogisticRegression classifier = new LogisticRegression()
-	      .setMaxIter(10)
-	      .setTol(1E-6)
-	      .setFitIntercept(true);
-
-	    // instantiate the One Vs Rest Classifier.
-	    OneVsRest ovr = new OneVsRest().setClassifier(classifier);
-
-	    // train the multiclass model.
-	    OneVsRestModel ovrModel = ovr.fit(train);
-
-	    // score the model on test data.
-	    Dataset<Row> predictions = ovrModel.transform(test)
-	      .select("prediction", "label");
-
-	    // obtain evaluator.
-	    MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
-	            .setMetricName("accuracy");
-
-	    // compute the classification error on test data.
-	    double accuracy = evaluator.evaluate(predictions);
-	    System.out.println("");
-	    System.out.println("");
-	    System.out.println("");
-	    System.out.println("");
-	    System.out.println("");
-
-	    System.out.println("Precision Score = " + accuracy);
-	    System.out.println("Test Error = " + (1 - accuracy));
-	    
-	    System.out.println("");
-	    System.out.println("");
-	    System.out.println("");
-	    System.out.println("");
-	    System.out.println("");
-
-	}
-	
-	private String[] makeDictionary(JavaRDD<PoliceKilling> rdd) {
-			
-		Set<String> dic = (rdd
-				.mapToPair(f -> new Tuple2<>(f.getArmed(), 1))
-				.reduceByKey((s1,s2) -> s1+s2)
-				.collectAsMap()
-				.keySet()) ;
-		
-
-        // Creating a hash set of strings 
-  
-        int n = dic.size(); 
-        String arr[] = new String[n]; 
-  
-        // Copying contents of s to arr[] 
-        System.arraycopy(dic.toArray(), 0, arr, 0, n); 
-
-        return arr;
-	}
 
 
 	public void closeSparkContext() {
