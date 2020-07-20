@@ -1,4 +1,7 @@
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import model.*;
@@ -11,10 +14,11 @@ public class Analytics {
 	private DatasetService datasetService; //SINGLETON -> NON INSTANZIARE DUE VOLTE
 	private Printer printer;
 
-
 	public Analytics(String fileMI, String filePP, String filePHS, String filePK, String fileSR, String fileSP, String fileSC, String fileML) {
 		this.datasetService = new DatasetService(fileMI, filePP, filePHS, filePK, fileSR, fileSP, fileSC, fileML);
 		this.printer = new Printer();
+
+
 	}
 
 
@@ -60,25 +64,36 @@ public class Analytics {
 
 		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
 		List<Tuple2<String,Double>>sdd = sortedState.collect();
-//		
-//		for(Tuple2<String,Double> a: sdd)
-//			System.out.println(a._1() + ": " + a._2());
-//		printer.printVictimsByRace(sortedRaceVictims,true);
-//		printer.printMostCommonNames(sortedCommonVictimNames,false);
-//		printer.printPoorestStates(sortedPoorestStates,true);
-//		printer.printEducationVSPoverty(educationVSpoverty, true);
-//		printer.printAllResults();
-//		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
-//		printer.printDangerousCities(sortedDangerousCities, true);
-//		printer.printCountBodyCamera(sortedBodyCamera, true);
-//		printer.printCommonWeapon(sortedCommonWeapon, true);
-//		printer.printVictime4state(sortedVictimByState, false);
-//		printer.printVictimGender(sortedVictimGender, true);
-//		printer.printMeanAge4Race(sortedAgeRace, true);
-//		printer.printKilledByMOnth(sortedMonth, true);
-//		printer.printAllRace4state(sortedRace4state, true);
-//		printer.printVictime4state(sortedVictimByState, true);
-//		printer.printStateMeanEducation(sortedMeanEducation, true);
+		//		
+		//		for(Tuple2<String,Double> a: sdd)
+		//			System.out.println(a._1() + ": " + a._2());
+		//		printer.printVictimsByRace(sortedRaceVictims,true);
+		//		printer.printMostCommonNames(sortedCommonVictimNames,false);
+		//		printer.printPoorestStates(sortedPoorestStates,true);
+		//		printer.printEducationVSPoverty(educationVSpoverty, true);
+		//		printer.printAllResults();
+		//		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
+		//		printer.printDangerousCities(sortedDangerousCities, true);
+		//		printer.printCountBodyCamera(sortedBodyCamera, true);
+		//		printer.printCommonWeapon(sortedCommonWeapon, true);
+		//		printer.printVictime4state(sortedVictimByState, false);
+		//		printer.printVictimGender(sortedVictimGender, true);
+		//		printer.printMeanAge4Race(sortedAgeRace, true);
+		//		printer.printKilledByMOnth(sortedMonth, true);
+		//		printer.printAllRace4state(sortedRace4state, true);
+		//		printer.printVictime4state(sortedVictimByState, true);
+		//		printer.printStateMeanEducation(sortedMeanEducation, true);
+
+//		List<Tuple2<Character, Double>> asd = killedByRaceProportion(this.datasetService.getPoliceKilling()).collect();
+//
+//		for(Tuple2<Character, Double> s : asd)
+//			System.out.println(s._1() + " " + s._2());
+
+		
+		List<Tuple2<String, Double>> asd = calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(),this.datasetService.getStatePopulation()).collect();
+
+		for(Tuple2<String, Double> s : asd)
+			System.out.println(s._1() + " " + s._2());
 
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
 
@@ -213,6 +228,42 @@ public class Analytics {
 
 		return state2meanHS;
 	}
+	
+	
+	private JavaRDD<Tuple2<Character, Double>> killedByRaceProportion(JavaRDD<PoliceKilling> rddPK) {
+
+		JavaPairRDD<Character, Integer> rdd = calculateKilledPeopleByRace(rddPK).mapToPair(f -> new Tuple2<>(f._1(), f._2()));
+
+		JavaPairRDD<Character, Double> asd = rdd.mapToPair(f ->{
+
+			if(f._1().equals('B'))
+				return new Tuple2<>(f._1(), f._2()/38929319.);
+
+			else if (f._1().equals('W'))
+				return new Tuple2<>(f._1(), f._2()/223553265.);
+
+
+			else if (f._1().equals('H'))
+				return new Tuple2<>(f._1(), f._2()/50477594.);
+
+
+			else if (f._1().equals('A'))
+				return new Tuple2<>(f._1(), f._2()/14674252.);
+
+
+			else if (f._1().equals('N'))
+				return new Tuple2<>(f._1(), f._2()/2932248.);
+			
+			else return null;
+		});
+		
+		JavaRDD<Tuple2<Character, Double>> sorted = asd.filter(f -> f!=null)
+				.map(tup -> new Tuple2<>(tup._1(), tup._2()))
+				.sortBy(tup ->tup._2(), false, 1);
+
+
+		return sorted;
+	}
 
 
 	private JavaRDD<Tuple2<Character, Double>> calculateMeanAgeWithRace(JavaRDD<PoliceKilling> rdd){
@@ -232,7 +283,6 @@ public class Analytics {
 		JavaPairRDD<Character, Double> meanAge4race = age4race
 				.join(numVictim4race)
 				.mapToPair(tup -> new Tuple2<>(tup._1(),Double.valueOf(( tup._2()._2() / tup._2()._1()))));
-
 
 
 		JavaRDD<Tuple2<Character, Double>> sorted = meanAge4race
