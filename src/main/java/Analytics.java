@@ -24,53 +24,79 @@ public class Analytics {
 
 	public void run() {
 
-
+		long startTime = System.currentTimeMillis();
 		JavaRDD<Tuple2<String, Double>> sortedPoorestStates = 
 				calculatePoorestStates(this.datasetService.getPercentagePoverty());
-		JavaPairRDD<String, Double> sortedMeanEducation =
-				calculateStateMeanEducation(this.datasetService.getPercentHighSchool());
-		JavaRDD<Tuple2<String, Integer>> sortedCommonVictimNames = 
-				calculateMostCommonVictimNames(this.datasetService.getPoliceKilling());
-		JavaRDD<Tuple2<String, Integer>> sortedCommonMannerOfDeath = 
-				calculateMostCommonMannerOfDeath(this.datasetService.getPoliceKilling());
-		JavaRDD<Tuple2<String,Integer>> sortedDangerousCities = 
-				dangerousCities(this.datasetService.getPoliceKilling());
-		JavaRDD<Tuple2<Boolean,Integer>> sortedBodyCamera =
-				bodyCameraCheck(this.datasetService.getPoliceKilling());
-		JavaRDD<Tuple2<Character, Integer>> sortedVictimGender =
-				genderOfVictim(this.datasetService.getPoliceKilling());
-		JavaRDD<Tuple2<String,Integer>> sortedCommonWeapon =
-				commonWeaponUse(this.datasetService.getPoliceKilling());
-		JavaRDD<Tuple2<Character,Integer>> sortedRaceVictims = 
-				calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
-		JavaPairRDD<String, Tuple2<Double, Double>> educationVSpoverty = 
-				calculateEducationVsPoverty(this.datasetService.getPercentHighSchool(), this.datasetService.getPercentagePoverty());
+		printer.printPoorestStates(sortedPoorestStates,true);
+		long endTime = System.currentTimeMillis();
+		long duration = (endTime - startTime);
 
-		JavaRDD<Tuple2<Character, Double>> sortedAgeRace =
-				calculateMeanAgeWithRace(this.datasetService.getPoliceKilling());
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
 
-		JavaRDD<Tuple2<String, Integer>> sortedVictimByState= 
-				calculateKilledPeopleByState(this.datasetService.getPoliceKilling());
+		System.out.println(duration);
 
-		JavaRDD<Tuple2<String, Double>> sortedState= 
-				calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(), this.datasetService.getStatePopulation());
-		JavaRDD<Tuple2<Integer, Integer>> sortedMonth =
-				killedByMonth(this.datasetService.getPoliceKilling());
-
-		JavaPairRDD<String, Tuple2<Tuple2<Tuple2<Tuple2<Double,Double>, Double>, Double>, Double>> sortedRace4state =
-				unionRace4State(this.datasetService.getShareRace());
-
-		//		
-
-		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
-		List<Tuple2<String,Double>>sdd = sortedState.collect();
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+//		JavaPairRDD<String, Double> sortedMeanEducation =
+//				calculateStateMeanEducation(this.datasetService.getPercentHighSchool());
+//		JavaRDD<Tuple2<String, Integer>> sortedCommonVictimNames = 
+//				calculateMostCommonVictimNames(this.datasetService.getPoliceKilling());
+//		JavaRDD<Tuple2<String, Integer>> sortedCommonMannerOfDeath = 
+//				calculateMostCommonMannerOfDeath(this.datasetService.getPoliceKilling());
+//		JavaRDD<Tuple2<String,Integer>> sortedDangerousCities = 
+//				dangerousCities(this.datasetService.getPoliceKilling());
+//		JavaRDD<Tuple2<Boolean,Integer>> sortedBodyCamera =
+//				bodyCameraCheck(this.datasetService.getPoliceKilling());
+//		JavaRDD<Tuple2<Character, Integer>> sortedVictimGender =
+//				genderOfVictim(this.datasetService.getPoliceKilling());
+//		JavaRDD<Tuple2<String,Integer>> sortedCommonWeapon =
+//				commonWeaponUse(this.datasetService.getPoliceKilling());
+//		JavaRDD<Tuple2<Character,Integer>> sortedRaceVictims = 
+//				calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
+//		JavaPairRDD<String, Tuple2<Double, Double>> educationVSpoverty = 
+//				calculateEducationVsPoverty(this.datasetService.getPercentHighSchool(), this.datasetService.getPercentagePoverty());
+//
+//		JavaRDD<Tuple2<Character, Double>> sortedAgeRace =
+//				calculateMeanAgeWithRace(this.datasetService.getPoliceKilling());
+//
+//		JavaRDD<Tuple2<String, Integer>> sortedVictimByState= 
+//				calculateKilledPeopleByState(this.datasetService.getPoliceKilling());
+//
+//		JavaRDD<Tuple2<String, Double>> sortedState= 
+//				calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(), this.datasetService.getStatePopulation());
+//		JavaRDD<Tuple2<Integer, Integer>> sortedMonth =
+//				killedByMonth(this.datasetService.getPoliceKilling());
+//
+//		JavaPairRDD<String, Tuple2<Tuple2<Tuple2<Tuple2<Double,Double>, Double>, Double>, Double>> sortedRace4state =
+//				unionRace4State(this.datasetService.getShareRace());
+//
+//		//		
+//
+//		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
+//		List<Tuple2<String,Double>>sdd = sortedState.collect();
 		//		
 		//		for(Tuple2<String,Double> a: sdd)
 		//			System.out.println(a._1() + ": " + a._2());
 		//		printer.printVictimsByRace(sortedRaceVictims,true);
 		//		printer.printMostCommonNames(sortedCommonVictimNames,false);
-		//		printer.printPoorestStates(sortedPoorestStates,true);
-		//		printer.printEducationVSPoverty(educationVSpoverty, true);
+//				printer.printEducationVSPoverty(educationVSpoverty, true);
 		//		printer.printAllResults();
 		//		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
 		//		printer.printDangerousCities(sortedDangerousCities, true);
@@ -82,7 +108,14 @@ public class Analytics {
 		//		printer.printKilledByMOnth(sortedMonth, true);
 		//		printer.printAllRace4state(sortedRace4state, true);
 		//		printer.printVictime4state(sortedVictimByState, true);
-		//		printer.printStateMeanEducation(sortedMeanEducation, true);
+//				printer.printStateMeanEducation(sortedMeanEducation, true);
+				
+//				List<Tuple2<String, Double>> sorted = sortedMeanEducation
+//						.map(tup -> new Tuple2<>(tup._1(), tup._2()))
+//						.sortBy(tup ->tup._2(), false, 1).collect();
+//				
+//		for(Tuple2<String, Double> s : sorted)
+//			System.out.println(s._1() + " " + s._2());
 
 //		List<Tuple2<Character, Double>> asd = killedByRaceProportion(this.datasetService.getPoliceKilling()).collect();
 //
@@ -90,14 +123,110 @@ public class Analytics {
 //			System.out.println(s._1() + " " + s._2());
 
 		
-		List<Tuple2<String, Double>> asd = calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(),this.datasetService.getStatePopulation()).collect();
+//		List<Tuple2<String, Double>> asd = calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(),this.datasetService.getStatePopulation()).collect();
 
-		for(Tuple2<String, Double> s : asd)
-			System.out.println(s._1() + " " + s._2());
-
+//		this.calculate2(this.datasetService.getPoliceKilling());
 		this.datasetService.closeSparkContext(); //CHIUSURA SPARK CONTEXT - DEV'ESSERE L'ULTIMA RIGA ESEGUITA
+		
+		
 
 	}
+	
+//	private JavaRDD<Tuple2<Character, Double>> calculate2(JavaRDD<PoliceKilling> rdd){
+//
+//
+//		JavaRDD<PoliceKilling> raceF = rdd
+//				.filter(f -> f.getGender().equals('F'));
+//
+//		JavaRDD<PoliceKilling> raceM = rdd
+//				.filter(f -> f.getGender().equals('M'));
+//
+//		double d = raceF.count();
+//		double a = raceM.count();
+//		double b = rdd.count();
+//
+//
+//		System.out.println("");
+//		System.out.println("");
+//		System.out.println("");
+//		System.out.println("");
+//		System.out.println((d/b)*100);
+//
+//
+//		//		List<Tuple2<Character, Double>> sad = raceF.mapToPair( f-> new Tuple2<>(f.getRace(), 1.))
+//		//			.reduceByKey((s1,s2) -> s1+s2)
+//		//			.collect();
+//		//		
+//		//
+//		//		for(Tuple2<Character, Double> s : sad) {
+//		//			System.out.println(s._1() + " "  + (s._2()/d)*100);
+//		//		}
+//
+//
+//		List<Tuple2<String, Integer>> sadsd = raceM.mapToPair(f -> new Tuple2<>(f.getArmed(), 1))
+//				.reduceByKey((s1,s2)->s1+s2)
+//				.collect();
+//
+//
+//		for(Tuple2<String, Integer> s : sadsd) {
+//			System.out.println(s._1() + " "  + (s._2()/a)*100);
+//		}
+//
+//		//		System.out.println("");
+//		//		System.out.println("");
+//		//		System.out.println("");
+//		//		System.out.println("");
+//		//		System.out.println("");
+//		//
+//		//		System.out.println((d/a)*100);
+//
+//		return null;
+//
+//	}
+//
+//	private JavaRDD<Tuple2<Character, Double>> calculate(JavaRDD<PoliceKilling> rdd){
+//
+//
+//		JavaRDD<PoliceKilling> age4race = rdd
+//				.filter(f -> f.getArmed().equals("unarmed"))
+//				.filter(f -> f.getFlee().equals("Not fleeing"));
+//
+//		double d = age4race.count();
+//		double a = rdd.count();
+//
+//		List<Tuple2<Character, Double>> sad = age4race.mapToPair( f-> new Tuple2<>(f.getRace(), 1.))
+//				.reduceByKey((s1,s2) -> s1+s2)
+//				.collect();
+//
+//
+//		for(Tuple2<Character, Double> s : sad) {
+//			System.out.println(s._1() + " "  + (s._2()/d)*100);
+//		}
+//
+//
+//		List<Tuple2<Boolean, Integer>> sadsd = age4race.mapToPair(f -> new Tuple2<>(f.getBodyCamera(), 1))
+//				.reduceByKey((s1,s2)->s1+s2)
+//				.collect();
+//
+//
+//		for(Tuple2<Boolean, Integer> s : sadsd) {
+//			System.out.println(s._1() + " "  + (s._2()/d)*100);
+//		}
+//
+//		System.out.println("");
+//		System.out.println("");
+//		System.out.println("");
+//		System.out.println("");
+//		System.out.println("");
+//
+//		System.out.println((d/a)*100);
+//
+//		return null;
+//
+//	}
+
+	
+	
 
 
 	private JavaPairRDD<String, Double> calculateMedianIncomeByState(JavaRDD<MedianHouseholdIncome> rddMH) {
