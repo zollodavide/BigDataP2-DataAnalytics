@@ -24,52 +24,31 @@ public class Analytics {
 
 	public void run() {
 
-		long startTime = System.currentTimeMillis();
-		JavaRDD<Tuple2<String, Double>> sortedPoorestStates = 
-				calculatePoorestStates(this.datasetService.getPercentagePoverty());
-		printer.printPoorestStates(sortedPoorestStates,true);
-		long endTime = System.currentTimeMillis();
-		long duration = (endTime - startTime);
-
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-
-		System.out.println(duration);
-
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
-		System.out.println("");
+		
 //		JavaPairRDD<String, Double> sortedMeanEducation =
 //				calculateStateMeanEducation(this.datasetService.getPercentHighSchool());
+		
 //		JavaRDD<Tuple2<String, Integer>> sortedCommonVictimNames = 
 //				calculateMostCommonVictimNames(this.datasetService.getPoliceKilling());
-//		JavaRDD<Tuple2<String, Integer>> sortedCommonMannerOfDeath = 
+
+//				JavaRDD<Tuple2<String, Integer>> sortedCommonMannerOfDeath = 
 //				calculateMostCommonMannerOfDeath(this.datasetService.getPoliceKilling());
-//		JavaRDD<Tuple2<String,Integer>> sortedDangerousCities = 
+
+//				JavaRDD<Tuple2<String,Integer>> sortedDangerousCities = 
 //				dangerousCities(this.datasetService.getPoliceKilling());
+//		
 //		JavaRDD<Tuple2<Boolean,Integer>> sortedBodyCamera =
 //				bodyCameraCheck(this.datasetService.getPoliceKilling());
+////	
 //		JavaRDD<Tuple2<Character, Integer>> sortedVictimGender =
 //				genderOfVictim(this.datasetService.getPoliceKilling());
+//		
 //		JavaRDD<Tuple2<String,Integer>> sortedCommonWeapon =
 //				commonWeaponUse(this.datasetService.getPoliceKilling());
+//		
 //		JavaRDD<Tuple2<Character,Integer>> sortedRaceVictims = 
 //				calculateKilledPeopleByRace(this.datasetService.getPoliceKilling());
+//		
 //		JavaPairRDD<String, Tuple2<Double, Double>> educationVSpoverty = 
 //				calculateEducationVsPoverty(this.datasetService.getPercentHighSchool(), this.datasetService.getPercentagePoverty());
 //
@@ -81,6 +60,7 @@ public class Analytics {
 //
 //		JavaRDD<Tuple2<String, Double>> sortedState= 
 //				calculateVictimsToPopulationProportion(this.datasetService.getPoliceKilling(), this.datasetService.getStatePopulation());
+		
 //		JavaRDD<Tuple2<Integer, Integer>> sortedMonth =
 //				killedByMonth(this.datasetService.getPoliceKilling());
 //
@@ -92,22 +72,22 @@ public class Analytics {
 //		List<Tuple2<String,Integer>>sd = sortedVictimByState.collect();
 //		List<Tuple2<String,Double>>sdd = sortedState.collect();
 		//		
-		//		for(Tuple2<String,Double> a: sdd)
-		//			System.out.println(a._1() + ": " + a._2());
-		//		printer.printVictimsByRace(sortedRaceVictims,true);
-		//		printer.printMostCommonNames(sortedCommonVictimNames,false);
+//				for(Tuple2<String,Double> a: sdd)
+//					System.out.println(a._1() + ": " + a._2());
+//				printer.printVictimsByRace(sortedRaceVictims,true);
+//				printer.printMostCommonNames(sortedCommonVictimNames,false);
 //				printer.printEducationVSPoverty(educationVSpoverty, true);
 		//		printer.printAllResults();
-		//		printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
-		//		printer.printDangerousCities(sortedDangerousCities, true);
-		//		printer.printCountBodyCamera(sortedBodyCamera, true);
-		//		printer.printCommonWeapon(sortedCommonWeapon, true);
+//				printer.printMostCommonMannerOfDeath(sortedCommonMannerOfDeath, true);
+//				printer.printDangerousCities(sortedDangerousCities, true);
+//				printer.printCountBodyCamera(sortedBodyCamera, true);
+//				printer.printCommonWeapon(sortedCommonWeapon, true);
 		//		printer.printVictime4state(sortedVictimByState, false);
-		//		printer.printVictimGender(sortedVictimGender, true);
-		//		printer.printMeanAge4Race(sortedAgeRace, true);
-		//		printer.printKilledByMOnth(sortedMonth, true);
-		//		printer.printAllRace4state(sortedRace4state, true);
-		//		printer.printVictime4state(sortedVictimByState, true);
+//				printer.printVictimGender(sortedVictimGender, true);
+//				printer.printMeanAge4Race(sortedAgeRace, true);
+//				printer.printKilledByMOnth(sortedMonth, true);
+//				printer.printAllRace4state(sortedRace4state, true);
+//				printer.printVictime4state(sortedVictimByState, true);
 //				printer.printStateMeanEducation(sortedMeanEducation, true);
 				
 //				List<Tuple2<String, Double>> sorted = sortedMeanEducation
