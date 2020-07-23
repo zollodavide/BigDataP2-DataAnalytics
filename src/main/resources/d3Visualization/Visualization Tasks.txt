@@ -1,0 +1,31 @@
+VISUALIZATION TASK (PLOT TYPE)
+
+	- (FATTO) Poorest States (Chloropleth)
+	- (FATTO) Most common names victim (Wordcloud) 
+	- (QUASI FATTO) Killed people count by State (Circular Bar Plot) 
+		-> Manca aggiustare il tooltip
+	- (QUASI FATTO) States High School vs Poverty (Parallel Coordinates -> 
+			First axis: mean state education 
+			Second axis: percentage poverty)
+		-> Manca aggiustare il tooltip
+	
+	- Share Race By State (Donut)
+	- Killed people count by race by State (Line muti group ->
+			X: States,
+			Y: [LINE X: KILLS BY RACE X])
+	- (FATTO) Kills by Month (Line)
+	- (FATTO) Killed people by gender (Pie)
+	- (FATTO) Killed people age distribution by gender (Violin -> 
+			VIOLIN1: MALE
+			VIOLIN2: FEMALE)
+	- (FATTO) Killed people count in proportion to their population in the state vs Median Income 
+		(Bubble -> 
+			X:MedianIncome, 
+			Y:KillCount, 
+			BUBBLE:StatePopulation)
+	- Most Dangerous Cities and States by kills (Histogram)
+	- (FATTO) Victims Age Distribution by Race (Density)
+
+=============================
+	
+	- Killed people in states vs Poverty vs Highschool

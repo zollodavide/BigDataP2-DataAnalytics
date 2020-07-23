@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+
+<body style="background-color: white;">
+    <style>
+  
+        .axis {
+          opacity: 0.4;
+        }
+      
+        .axis:hover {
+          opacity: 1;
+        }
+      
+        svg {
+          font: 10px sans-serif;
+        }
+      
+        .background path {
+          fill: none;
+          stroke: #fff;
+          shape-rendering: crispEdges;
+        }
+      
+        .foreground path {
+          fill: none;
+          stroke: #34008B;
+          opacity:0.1;
+        }
+      
+        div.tooltip-parallel {
+            position: absolute;
+            text-align: center;
+            padding: .5rem;
+            background: #FFFFFF;
+            color: #313639;
+            border: 1px solid #313639;
+            border-radius: 2px;
+            pointer-events: none;
+            font-size: 1.3rem;
+        }
+      
+        .axis line,
+        .axis path {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+      
+        .axis text {
+          text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+          cursor: move;
+        }
+        </style>
+
+    <!-- Create a div where the graph will take place -->
+    <h1 style="font-family: Arial, Helvetica, sans-serif; text-align: center;">Incidenza della povert&aacute; sullo studio</h1>
+    <!-- Create a div where the graph will take place -->
+	<div style="border-color: brown; border-width: 1px; border: solid; width: 800px; margin: auto; background-color: d3d3d3;"
+    id="mio_grafico">
+    
+    </div>
+
+    <script>
+    
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 10, bottom: 10, left: 180},
+        width = 500 - margin.left - margin.right,
+        height = 350 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select("#mio_grafico")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                      "translate(" + margin.left + "," + margin.top + ")");
+
+    var div = d3.select("body").append("div")
+                .attr("class", "tooltip-donut")
+                .style("opacity", 0);
+
+    // Parse the Data
+    d3.csv("CSVs/highSchoolVsPoverty.csv", function(data) {
+
+    // Extract the list of dimensions we want to keep in the plot. Here I keep all except the column called states
+    dimensions = d3.keys(data[0]).filter(function(d) { return d != "state" })
+
+    // For each dimension, I build a linear scale. I store all in a y object
+    var y = {}
+    var line = d3.line(),
+    axis = d3.axisLeft(),
+    background,
+    foreground;
+    
+    for (i in dimensions) {
+    name = dimensions[i]
+    y[name] = d3.scaleLinear()
+      .domain( d3.extent(data, function(d) { return +d[name]; }) )
+      .range([height, 0])
+  }
+  
+
+    var color = d3.scaleOrdinal()
+    .domain(["SC", "CO", "MS", "MA", "GA", "AZ", "TN", "IN", "HI", "MI", "NE", "WV", "VT", "WY", "NH",
+             "LA", "CT", "MO", "WA", "ID", "IA", "RI", "NJ", "AL", "OR", "ND", "NV", "KY", "NM", "MT",
+             "VA", "KS", "NY", "DC", "IL", "AR", "ME", "MN", "CA", "WI", "TX", "UT", "SD", "FL", "OK",
+             "DE", "PA", "MD", "OH", "AK", "NC"])
+    .range([ "#f0f8ff", "#faebd7", "#00ffff", "#7fffd4", "#f0ffff", "#f5f5dc", "#ffe4c4", "#000000", "#ffebcd", "#0000ff",
+             "#8a2be2", "#a52a2a", "#deb887", "#5f9ea0", "#7fff00", "#d2691e", "#ff7f50", "#6495ed", "#fff8dc", "#dc143c",
+             "#00ffff", "#00008b", "#008b8b", "#b8860b", "#a9a9a9", "#006400", "#a9a9a9", "#bdb76b", "#8b008b", "#556b2f",
+             "#ff8c00", "#9932cc", "#8b0000", "#e9967a", "#8fbc8f", "#483d8b", "#2f4f4f", "#00ced1", "#9400d3", "#ff1493",
+             "#00bfff", "#1e90ff", "#b22222", "#fffaf0", "#228b22", "#ff00ff", "#dcdcdc", "#f8f8ff", "#daa520", "#808080",
+             "#4b0082"]);
+            
+            
+   // Build the X scale -> it find the best position for each Y axis
+  x = d3.scalePoint()
+    .range([0, width])
+    .domain(dimensions);
+
+  // Highlight the specie that is hovered
+  var highlight = function(d){
+
+    selected_state = d.state
+
+    // first every group turns grey
+    d3.selectAll(".line")
+      .transition().duration(200)
+      .style("stroke", "lightgrey")
+      .style("opacity", "0.2")
+    // Second the hovered state takes its color
+    d3.selectAll("." + selected_state)
+      .transition().duration(200)
+      .style("stroke", color(selected_state))
+      .style("opacity", "1")
+     // display tooltip
+     div.transition()
+    	.duration(200)
+    	.style("opacity", 1);
+        div.html("" + d.state)
+    	.style("left", (d3.event.pageX - 15) + "px")
+      .style("top", (d3.event.pageY - 15) + "px");
+  }
+
+  // Unhighlight
+  var doNotHighlight = function(d){
+    d3.selectAll(".line")
+      .transition().duration(200).delay(1000)
+      .style("stroke", function(d){ return( color(d.state))} )
+      .style("opacity", "1")
+  }
+
+  // The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this raw.
+  function path(d) {
+      return d3.line()(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
+  }
+
+  // Draw the lines
+  svg
+    .selectAll("myPath")
+    .data(data)
+    .enter()
+    .append("path")
+      .attr("class", function (d) { return "line " + d.state } ) // 2 class for each line: 'line' and the group name
+      .attr("d",  path)
+      .style("fill", "none" )
+      .style("stroke", function(d){ return( color(d.states))} )
+      .style("opacity", 0.5)
+      .on("mouseover", highlight)
+      .on("mouseleave", doNotHighlight )
+
+  // Draw the axis:
+  svg.selectAll("myAxis")
+    // For each dimension of the dataset I add a 'g' element:
+    .data(dimensions).enter()
+    .append("g")
+    .attr("class", "axis")
+    // I translate this element to its right position on the x axis
+    .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
+    // And I build the axis with the call function
+    .each(function(d) { d3.select(this).call(d3.axisLeft().ticks(5).scale(y[d])); })
+    // Add axis title
+    .append("text")
+      .style("text-anchor", "left")
+      .attr("y", -9)
+      .text(function(d) { return d; })
+      .style("fill", "black")
+      
+      
+      
+})
+
+
+</script>

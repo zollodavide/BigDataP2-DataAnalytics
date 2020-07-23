@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<body style="background-color: lavenderblush;">
+	
+	<h1 style="font-family: Arial, Helvetica, sans-serif; text-align: center;">Morti in proporzione alla popolazione dello stato e al reddito medio</h1>
+	<!-- Create a div where the graph will take place -->
+	<div style="border-color: black; border-width: 1px; border: solid; width: 600px; height: 600px; margin: auto; background-color: white;"
+    id="my_dataviz">
+
+    <div id="tool" style="height: 100px; font-size: 20px; font-family: Arial, Helvetica, sans-serif;"></div>
+
+	<script>
+
+       // set the dimensions and margins of the graph
+var margin = {top: 10, right: 20, bottom: 30, left: 50},
+    width = 500 - margin.left - margin.right,
+    height = 460 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("display", "block")
+    .style("margin", "auto")
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+          var tooltip = d3.select("#tool")
+			.append("div")
+			.style("opacity", 0)
+			.attr("class", "tooltip")
+			.style("padding", "10px")
+			.style("text-align", "center")
+
+  // -2- Create 3 functions to show / update (when mouse move but stay on same circle) / hide the tooltip
+  var showTooltip = function(d) {
+    tooltip
+      .transition()
+      .duration(200)
+    tooltip
+      .style("opacity", 1)
+      .html("<b>Codice Stato: </b>" + d.State + "<br>" + "<b>Popolazione: </b>" + d.Population +
+         "<br><b>Reddito Medio: </b>" + d.Income +"$ <br>" 
+         + "<b>Nro. di Vittime: </b>" + d.Kills )
+      .style("left", (d3.mouse(this)[0]+30) + "px")
+      .style("top", (d3.mouse(this)[1]+30) + "px")
+  }
+  var moveTooltip = function(d) {
+    tooltip
+      .style("left", (d3.mouse(this)[0]+30) + "px")
+      .style("top", (d3.mouse(this)[1]+30) + "px")
+  }
+  var hideTooltip = function(d) {
+    tooltip
+      .transition()
+      .duration(200)
+      .style("opacity", 0)
+  }
+
+//Read the data
+d3.csv("CSVs/StateIncome2Kills2Population.csv", function(data) {
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([30000, 85000])
+    .range([ 0, width ]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, 470])
+    .range([ height, 0]);
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // Add a scale for bubble size
+  var z = d3.scaleLinear()
+    .domain([200000, 40209127])
+    .range([ 1, 40]);
+
+    svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", width)
+    .attr("y", height + margin.top + 20)
+    .style("font-family","Arial, Helvetica, sans-serif")
+    .text("Reddito Medio");
+
+    svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("transform", "rotate(-90)")
+    .attr("y", -margin.left+20)
+    .attr("x", -margin.top)
+    .style("font-family","Arial, Helvetica, sans-serif")
+    .text("# Vittime")
+
+    
+  // Add dots
+  svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.Income); } )
+      .attr("cy", function (d) { return y(d.Kills); } )
+      .attr("r", function (d) { return z(d.Population); } )
+      .style("fill", "#69b3a2")
+      .style("opacity", "0.6")
+      .attr("stroke", "black")
+    .on("mouseover", showTooltip )
+    .on("mousemove", moveTooltip )
+    .on("mouseleave", hideTooltip )
+      
+})
+	</script>
+</body>
+</html>
